@@ -10,22 +10,37 @@ export async function POST(request: NextRequest, response: NextApiResponse) {
         return NextResponse.json({
             error: 'Invalid Data',
         })
-    const newTodo = await prisma.todo.create({ data: body })
-    console.log(newTodo)
+
+    // const todos = await prisma.todo.findMany()
+    // let order = todos.length === 0 ? 0 : todos.length
+
+    const newTodo = await prisma.todo.create({
+        data: {
+            todoId: body.todoId,
+            title: body.title,
+            completed: body.completed,
+        },
+    })
+
     return NextResponse.json(newTodo)
 }
 
 export async function GET(request: NextRequest, response: NextApiResponse) {
     const catcher = (error: Error) => response.status(400).json({ error })
     const todos = await prisma.todo.findMany().catch(catcher)
-    const mappedTodos = todos?.map((todo: Todo) => {
+    if (!todos) return NextResponse.json({ error: 'No todos found' })
+
+    const mappedTodos = todos?.map((todo: Todo, index: number) => {
         return {
             todoId: todo.todoId,
             title: todo.title,
             completed: todo.completed,
+            order: todo.order,
         }
     })
-    return NextResponse.json(mappedTodos)
+    const sortedTodos = mappedTodos?.sort((a, b) => a.order! - b.order!)
+
+    return NextResponse.json(sortedTodos)
 }
 
 export async function DELETE(request: NextRequest, response: NextResponse) {

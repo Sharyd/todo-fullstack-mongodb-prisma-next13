@@ -45,12 +45,14 @@ const CreateTodo = ({ isFullstackWay, isAllCompletedDb }: Props) => {
         event.preventDefault()
         let input = inputRef?.current?.value
         const title = input?.trim()
+        let index = 0
         if (title?.trim() === '')
             return errorToast('Empty todos are not allowed')
         const newTodo: Todo = {
             todoId: uuidv4(),
             title: title,
             completed: false,
+            order: undefined,
         }
         if (newTodo && !isFullstackWay) {
             addTodo(newTodo)

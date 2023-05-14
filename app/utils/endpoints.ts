@@ -1,6 +1,6 @@
 import prisma from './prismadb'
 import axios, { AxiosResponse } from 'axios'
-import { Todo } from './types'
+import { Todo, draggedTodo } from './types'
 
 export const sendTodos = async (todo: Todo) => {
     if (!todo) return null
@@ -21,7 +21,19 @@ export const updateAllToCompletedTodos = async () => {
 }
 
 export const updateTodos = async (todo: Todo): Promise<AxiosResponse<Todo>> => {
-    const response = await axios.put(`/api/todoUpdate/${todo.todoId}`, todo)
+    const response = await axios.put(
+        `http://localhost:3000/api/todoUpdate/${todo.todoId}`,
+        todo
+    )
+    return response.data
+}
+
+export const updateDragTodos = async (
+    todo: any
+): Promise<AxiosResponse<any>> => {
+    const response = await axios.patch(`http://localhost:3000/api/dragTodos`, {
+        todo,
+    })
     return response.data
 }
 

@@ -15,4 +15,11 @@ model Todo {
   title           String
   completed       Boolean  @default(false)
   todoId          String   @unique
+  order           Int?
 }
+
+
+
+
+
+

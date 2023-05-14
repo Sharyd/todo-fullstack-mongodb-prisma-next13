@@ -1,18 +1,18 @@
 'use client'
 import update from 'immutability-helper'
-import React, { Suspense, useCallback, useEffect, useState } from 'react'
+import React, { Suspense, use, useCallback, useEffect, useState } from 'react'
 import Container from '../Container'
 import Heading from '../Heading'
 import ThemeToggler from '../ThemeToggler'
 import CreateTodo from './CreateTodo'
-import Todos from './Todos'
+import Todos, { DragItem } from './Todos'
 import Card from '../Card'
 import Actions from './Actions'
 import { useTodoContext } from '@/app/store/todoContextProvider'
 import ActionsMobile from './ActionsMobile'
-import { getTodos } from '@/app/utils/endpoints'
+import { getTodos, updateDragTodos, updateTodos } from '@/app/utils/endpoints'
 
-import { useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Todo as TodoType } from '../../utils/types'
 import Loader from '../Loader'
 import { PuffLoader } from 'react-spinners'
@@ -21,6 +21,10 @@ import {
     isAllTodosCompleted,
     validateFilters,
 } from '@/app/utils/helpers'
+import useTodoMutation from '@/app/hooks/useTodoMutation'
+import useTodosMutation from '@/app/hooks/useTodosMutation'
+import useLocalStorage from '@/app/hooks/useLocalStorage'
+import axios from 'axios'
 
 interface Props {
     isFullstackWay: boolean
@@ -35,33 +39,80 @@ const Todo = ({ isFullstackWay, setIsFullstackWay }: Props) => {
         isLoading,
         isFetching,
     } = useQuery<TodoType[]>('todos', getTodos)
+
     const filteredDbTodos = useCallback<any>(
         dbtodos?.filter((todo) => {
             return validateFilters(dbFilters, todo.completed)
         }),
         [dbFilters, dbtodos] as const
     )
-    const [dragTodos, setDragTodos] = useState(filteredDbTodos)
 
+    const [dragTodosdb, setDragTodosdb] = useState<TodoType[]>(
+        filteredDbTodos ?? []
+    )
+    // const [sortedTodos, setSortedTodos] = useState<TodoType[]>(dragTodosdb)
+
+    const [order, setOrder] = useState(dbtodos?.map((item, index) => index))
+    const queryClient = useQueryClient()
+    console.log(filteredDbTodos)
+    useEffect(() => {
+        const cleanup = () => {
+            // Update the todo orders in the database
+            updateDragTodoMutation.mutate({
+                todo: dragTodosdb,
+            })
+        }
+
+        window.addEventListener('beforeunload', cleanup)
+
+        return () => {
+            window.removeEventListener('beforeunload', cleanup)
+        }
+    }, [dragTodosdb])
+    // const sortedTodos = useCallback<any>(
+    //     dragTodosdb?.sort((a: any, b: any) => a.order - b.order),
+    //     []
+    // )
+    // console.log(sortedTodos)
+    console.log(dragTodosdb)
+    const updateDragTodoMutation = useMutation(updateDragTodos, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('todos')
+        },
+    })
+    // console.log(sortedTodos)
     useEffect(() => {
         if (isFullstackWay) {
-            setDragTodos(filteredDbTodos)
+            setDragTodosdb(filteredDbTodos)
         }
     }, [filteredDbTodos, isFullstackWay])
+    const handleDrop = (item: DragItem, monitor: any) => {
+        const dragIndex = monitor.getItem().index
+        const dropIndex = order?.indexOf(dragIndex)
+        const newOrder = [...(order || [])]
+        newOrder.splice(dragIndex, 1)
+        newOrder.splice(dropIndex!, 0, dragIndex)
+        setOrder(newOrder)
 
-    useEffect(() => {
-        if (!isFullstackWay) {
-            setDragTodos(todos)
-        }
-    }, [todos, isFullstackWay])
+        // updateDragTodoMutation.mutate({
+        //     todo: item,
+        // })
+    }
+    // useEffect(() => {
+    //     setDragTodosdb(sortedTodos)
+    // }, [])
+    // useEffect(() => {
+    //     if (!isFullstackWay) {
+    //         setDragTodos(todos)
+    //         localStorage.setItem('draggedTodos', JSON.stringify(todos))
+    //     }
+    // }, [todos, isFullstackWay])
 
     const activeTodosDbLength = activeTodos(dbtodos ?? [])
     const isAllCompletedDb = isAllTodosCompleted(dbtodos ?? [])
 
     const moveTodo = useCallback((dragIndex: number, hoverIndex: number) => {
-        if (!dragTodos) return
-
-        setDragTodos((prevCards: TodoType[] | undefined) =>
+        setDragTodosdb((prevCards: TodoType[] | undefined) =>
             update(prevCards as TodoType[], {
                 $splice: [
                     [dragIndex, 1],
@@ -85,8 +136,9 @@ const Todo = ({ isFullstackWay, setIsFullstackWay }: Props) => {
                     />
                     <div className="flex gap-4 flex-col sm:gap-0">
                         <Card>
-                            {dragTodos?.map((todo: TodoType, idx: number) => (
+                            {dragTodosdb?.map((todo: TodoType, idx: number) => (
                                 <Todos
+                                    handleDrop={handleDrop}
                                     key={todo.todoId}
                                     todo={todo}
                                     index={idx}

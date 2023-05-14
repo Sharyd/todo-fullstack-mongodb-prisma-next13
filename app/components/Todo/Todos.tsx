@@ -15,28 +15,40 @@ import { errorToast, successToast } from '@/app/utils/toast'
 import Loader from '../Loader'
 import { IoMdClose } from 'react-icons/io'
 import type { Identifier, XYCoord } from 'dnd-core'
-import { useDrag, useDrop } from 'react-dnd'
+import { DropTargetMonitor, useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from '@/app/utils/types'
+
+export interface DragItem {
+    index: number
+    todoId: string
+    type: string
+}
 
 interface Props {
     isFullstackWay: boolean
     todo: Todo
     moveTodo: (dragIndex: number, hoverIndex: number) => void
     index: number
+    handleDrop: (
+        todo: DragItem,
+        monitor: DropTargetMonitor<DragItem, void>
+    ) => void | undefined
 }
 
-interface DragItem {
-    index: number
-    todoId: string
-    type: string
-}
-const Todos = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
+const Todos = ({
+    todo,
+    isFullstackWay,
+    moveTodo,
+    index,
+    handleDrop,
+}: Props) => {
     const ref = useRef<HTMLDivElement>(null)
     const { removeTodo, updateTodo } = useTodoContext()
     const inputRef = useRef<HTMLInputElement | null>(null)
     const [isActiveUpdate, setIsActiveUpdate] = useState(false)
     const [newTitle, setNewTitle] = useState('')
     const { todoId, title, completed } = todo
+
     const queryClient = useQueryClient()
 
     const { todoMutation: updateTodoMutation, isLoading: updateLoading } =
@@ -98,6 +110,7 @@ const Todos = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
         { handlerId: Identifier | null }
     >({
         accept: ItemTypes.TODO,
+        drop: handleDrop,
         collect(monitor) {
             return {
                 handlerId: monitor.getHandlerId(),
@@ -109,7 +122,7 @@ const Todos = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
             }
             const dragIndex = item.index
             const hoverIndex = index
-
+            console.log(hoverIndex)
             // Don't replace items with themselves
             if (dragIndex === hoverIndex) {
                 return
@@ -134,17 +147,19 @@ const Todos = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
             // When dragging upwards, only move when the cursor is above 50%
 
             // Dragging downwards
-            if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+
+            if (dragIndex! < hoverIndex! && hoverClientY < hoverMiddleY) {
                 return
             }
 
             // Dragging upwards
-            if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+            if (dragIndex! > hoverIndex! && hoverClientY > hoverMiddleY) {
                 return
             }
 
             // Time to actually perform the action
-            moveTodo(dragIndex, hoverIndex)
+
+            dragIndex || hoverIndex ? moveTodo(dragIndex, hoverIndex) : null
 
             // Note: we're mutating the monitor item here!
             // Generally it's better to avoid mutations,
@@ -164,8 +179,9 @@ const Todos = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
         }),
     })
     const opacity = isDragging ? 0 : 1
-    drag(drop(ref))
 
+    drag(drop(ref))
+    console.log(handlerId)
     return (
         <div
             ref={ref}
