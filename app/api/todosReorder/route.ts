@@ -8,7 +8,7 @@ export async function PATCH(request: NextRequest, response: NextResponse) {
     const body = await request.json()
     if (!body)
         return NextResponse.json({
-            error: 'Invalid Data',
+            error: 'Invalid Todo',
         })
 
     const todos = body.todo.todo

@@ -76,6 +76,7 @@ const TodoProvider: React.FC<TodoProviderProps> = ({ children }) => {
                 activeTodos: activeTodosLength,
                 setAllCompleted,
                 isAllCompleted,
+                setTodos,
                 updateTodo,
             }}
         >

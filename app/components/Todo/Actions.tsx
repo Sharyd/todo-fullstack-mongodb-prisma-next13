@@ -7,7 +7,7 @@ import { isAllTodosCompleted } from '@/app/utils/helpers'
 import { errorToast, successToast } from '@/app/utils/toast'
 import React from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import Loader from '../Loader'
+import Loader from '../ui/Loader'
 
 export const filtersArray = ['all', 'active', 'completed']
 

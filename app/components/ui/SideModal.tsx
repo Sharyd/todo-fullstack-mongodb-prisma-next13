@@ -2,8 +2,9 @@
 import { Fragment, useContext, useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { BsChevronLeft } from 'react-icons/bs'
-import { ThemeContext } from '../store/themeContext'
+import { ThemeContext } from '../../store/themeContext'
 import { AnimatePresence, motion } from 'framer-motion'
+import Button from './Button'
 
 interface Props {
     isFullstackWay: boolean
@@ -64,14 +65,14 @@ export function SideModal({
                                     ? 'fullStack active'
                                     : 'client side active'}
                             </p>
-                            <button
+                            <Button
                                 onClick={() =>
                                     setIsFullstackWay((prev) => !prev)
                                 }
-                                className="bg-primaryBlue text-white p-4 font-bold uppercase text-lg py-3 px-5"
-                            >
-                                {!isFullstackWay ? 'Fullstack' : 'Client side'}
-                            </button>
+                                label={
+                                    isFullstackWay ? 'Fullstack' : 'Client side'
+                                }
+                            ></Button>
 
                             <button
                                 onClick={() => setIsOpen(false)}

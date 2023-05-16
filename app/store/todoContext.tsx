@@ -13,6 +13,7 @@ export interface TodoContextType {
     activeTodos: number
     isAllCompleted: boolean
     updateTodo: (id: string, title: string) => void
+    setTodos: React.Dispatch<React.SetStateAction<Todo[]>>
 }
 
 export const defaultTodoContext: TodoContextType = {
@@ -27,6 +28,7 @@ export const defaultTodoContext: TodoContextType = {
     activeTodos: 0,
     isAllCompleted: false,
     updateTodo: () => {},
+    setTodos: () => {},
 }
 
 export const TodoContext = createContext<TodoContextType>(defaultTodoContext)

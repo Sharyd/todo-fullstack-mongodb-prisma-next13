@@ -31,9 +31,12 @@ export const updateTodos = async (todo: Todo): Promise<AxiosResponse<Todo>> => {
 export const updateDragTodos = async (
     todo: any
 ): Promise<AxiosResponse<any>> => {
-    const response = await axios.patch(`http://localhost:3000/api/dragTodos`, {
-        todo,
-    })
+    const response = await axios.patch(
+        `http://localhost:3000/api/todosReorder`,
+        {
+            todo,
+        }
+    )
     return response.data
 }
 
