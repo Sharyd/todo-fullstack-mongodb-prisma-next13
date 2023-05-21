@@ -14,8 +14,8 @@ const useTodosMutation = (
             await queryClient.cancelQueries({ queryKey: ['todos'] })
             const previousTodos = queryClient.getQueryData(['todos'])
             queryClient.setQueryData(['todos'], (old: Todo | any) => [
-                ...old,
                 newTodo,
+                ...old,
             ])
             return { previousTodos }
         },

@@ -48,7 +48,7 @@ const CreateTodo = ({ isFullstackWay, isAllCompletedDb }: Props) => {
 
         if (title?.trim() === '')
             return errorToast('Empty todos are not allowed')
-        const newTodo: Todo = {
+        const newTodo: Todo | any = {
             todoId: uuidv4(),
             title: title,
             completed: false,

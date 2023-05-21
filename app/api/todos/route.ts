@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { Todo } from '../../utils/types'
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '../../utils/prismadb'
+import getLoggedUser from '@/app/sessions/getLoggedUser'
 
 export async function POST(request: NextRequest, response: NextApiResponse) {
     const body = await request.json()
@@ -10,15 +11,13 @@ export async function POST(request: NextRequest, response: NextApiResponse) {
         return NextResponse.json({
             error: 'Invalid Data',
         })
-
-    // const todos = await prisma.todo.findMany()
-    // let order = todos.length === 0 ? 0 : todos.length
+    const loggedUser = await getLoggedUser()
 
     const newTodo = await prisma.todo.create({
         data: {
-            todoId: body.todoId,
-            title: body.title,
-            completed: body.completed,
+            ...body,
+            userName: loggedUser?.name,
+            userId: loggedUser?.id,
         },
     })
 
@@ -26,19 +25,16 @@ export async function POST(request: NextRequest, response: NextApiResponse) {
 }
 
 export async function GET(request: NextRequest, response: NextApiResponse) {
-    const catcher = (error: Error) => response.status(400).json({ error })
-    const todos = await prisma.todo.findMany().catch(catcher)
+    const todos = await prisma.todo.findMany({
+        orderBy: {
+            createdAt: 'desc',
+        },
+    })
     if (!todos) return NextResponse.json({ error: 'No todos found' })
 
-    const mappedTodos = todos?.map((todo: Todo, index: number) => {
-        return {
-            todoId: todo.todoId,
-            title: todo.title,
-            completed: todo.completed,
-            order: todo.order,
-        }
-    })
-    const sortedTodos = mappedTodos?.sort((a, b) => a.order! - b.order!)
+    const loggedUser = await getLoggedUser()
+
+    const sortedTodos = todos?.sort((a: any, b: any) => a.order! - b.order!)
 
     return NextResponse.json(sortedTodos)
 }

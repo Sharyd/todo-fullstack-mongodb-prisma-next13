@@ -1,46 +1,83 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { FieldErrors } from 'react-hook-form'
 
 interface InputProps {
-    label: string
-    register: any
-    required: boolean
-    placeholderText: string
+    id: string
+    label?: string
+    register?: any
+    required?: boolean
+    placeholderText?: string
     type: string
+    errors?: FieldErrors
 }
 
 const Input = ({
+    id,
     label,
     register,
     required,
+    errors,
     placeholderText,
     type,
 }: InputProps) => {
-    const [placeholder, setPlaceholder] = useState(placeholderText.slice(0, 0))
+    const [placeholder, setPlaceholder] = useState(placeholderText?.slice(0, 0))
     const [placeholderIndex, setPlaceholderIndex] = useState(0)
     const ref = useRef(null)
-    console.log(ref)
+
+    const handlePlaceholderText = useCallback(
+        (placeholderIdx: number) => {
+            if (!placeholderText) return
+            if (placeholderIdx <= placeholderText?.length) {
+                setPlaceholder(placeholderText?.slice(0, placeholderIdx))
+                setPlaceholderIndex((prev) => prev + 1)
+            }
+        },
+        [placeholderText]
+    )
+
     useEffect(() => {
         const intr = setTimeout(() => {
-            setPlaceholder(placeholderText.slice(0, placeholderIndex))
-            setPlaceholderIndex(placeholderIndex + 1)
+            handlePlaceholderText(placeholderIndex)
         }, 100)
         return () => {
             clearTimeout(intr)
         }
-    }, [placeholderText, placeholderIndex])
+    }, [handlePlaceholderText, placeholderIndex])
 
     return (
         <div className="flex flex-col gap-2 p-2  w-full">
-            <label className="px-2">{label}</label>
-            <input
-                ref={ref}
-                type={type}
-                className="rounded-md p-2 text-darkGrayishBlue placeholder:text-black/30 focus:outline-darkGrayishBlue
-                w-[95%] focus:w-[100%] m-auto  transition-all border-0 appearance-none focus:border-none focus:ring-0 focus:outline-none
-                "
-                placeholder={placeholder}
-                {...register(label, { required })}
-            />
+            {register && type !== 'submit' ? (
+                <>
+                    <label className="px-2">{label}</label>
+                    <input
+                        id={id}
+                        ref={ref}
+                        type={type}
+                        className={`
+                        rounded-md p-2 text-darkGrayishBlue placeholder:text-black/30 focus:outline-darkGrayishBlue
+                         w-[95%] focus:w-[100%] m-auto  transition-all  appearance-none focus:border-none focus:ring-0 focus:outline-none
+                         ${
+                             errors?.[id]
+                                 ? 'border-2 border-red-500 '
+                                 : 'focus:outline-darkGrayishBlue'
+                         }
+                        `}
+                        placeholder={placeholder}
+                        {...register(id, { required })}
+                    />
+                </>
+            ) : (
+                <input
+                    id={id}
+                    value={label}
+                    className="cursor-pointer rounded-md mt-2 p-2
+                    hover:text-primaryBlue
+                    w-[95%] focus:w-[100%] m-auto border-2 border-primaryBlue   transition-all border-0 appearance-none focus:border-none outline-primaryBlue focus:ring-0 focus:outline-none
+                    
+                    "
+                    type={type}
+                />
+            )}
         </div>
     )
 }

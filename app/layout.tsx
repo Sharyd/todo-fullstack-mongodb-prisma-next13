@@ -9,6 +9,9 @@ import { Toaster } from 'react-hot-toast'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import GradientImage from './components/GradientImage'
+import Hydrate from './components/Hydrate'
+import { SessionProvider, useSession } from 'next-auth/react'
+
 const JosefinSans = Josefin_Sans({ subsets: ['latin'] })
 
 export const metadata = {
@@ -29,7 +32,7 @@ export default function RootLayout({
                 <ThemeProvider>
                     <DndProvider backend={HTML5Backend}>
                         <TodoProvider>
-                            <body className={`${JosefinSans.className}`}>
+                            <Hydrate className={`${JosefinSans.className}`}>
                                 <Theme>
                                     <main
                                         className={`min-h-screen  text-secondaryText bg-mainBackground `}
@@ -40,7 +43,7 @@ export default function RootLayout({
                                     </main>
                                     <Toaster />
                                 </Theme>
-                            </body>
+                            </Hydrate>
                         </TodoProvider>
                     </DndProvider>
                 </ThemeProvider>

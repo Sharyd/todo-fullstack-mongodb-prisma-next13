@@ -4,7 +4,8 @@ import { Dialog } from '@headlessui/react'
 import { BsChevronLeft } from 'react-icons/bs'
 import { ThemeContext } from '../../store/themeContext'
 import { AnimatePresence, motion } from 'framer-motion'
-import Button from './Button'
+
+import { HighlightButton, MainButton } from './Button'
 
 interface Props {
     isFullstackWay: boolean
@@ -47,39 +48,46 @@ export function SideModal({
                             theme === 'theme-light'
                                 ? 'bg-white text-[#777a92]'
                                 : 'bg-[#25273c] text-white'
-                        } bottom-[40%] left-0 z-50`}
+                        } bottom-[20%] left-0 z-50`}
                         open={isOpen}
                         onClose={() => setIsOpen(false)}
                     >
                         <Dialog.Panel className="flex flex-col gap-5">
                             <Dialog.Title className="text-2xl">
-                                Switch to approach
+                                Welcome in Todo application!
                             </Dialog.Title>
 
-                            <h2 className="text-xl">
-                                Do you want full stack todo app? Or just client
-                                side version with localStorage
-                            </h2>
+                            <p className="text-xl">
+                                Choose the version: <br /> 1. Full Stack Todo
+                                App: - Enjoy the complete functionality of Todo
+                                app. - Your data will be securely stored on the
+                                server. - Access your Todo list from anywhere.
+                                <br /> 2. Client-Side Version with LocalStorage:
+                                - Experience a lightweight version of Todo app.
+                                - Your data will be stored locally in your
+                                browser's storage. - Ideal for quick usage and
+                                personal use.
+                            </p>
                             <p className="text-green-600">
                                 {isFullstackWay
                                     ? 'fullStack active'
                                     : 'client side active'}
                             </p>
-                            <Button
+                            <MainButton
                                 onClick={() =>
                                     setIsFullstackWay((prev) => !prev)
                                 }
                                 label={
                                     isFullstackWay ? 'Fullstack' : 'Client side'
                                 }
-                            ></Button>
+                            ></MainButton>
 
-                            <button
+                            <HighlightButton
                                 onClick={() => setIsOpen(false)}
-                                className="bg-primaryBlue absolute text-white top-0 right-0 md:-right-16 cursor-pointer p-4  sm:p-6 animate-pulse"
-                            >
-                                <BsChevronLeft />
-                            </button>
+                                type="button"
+                                label={<BsChevronLeft />}
+                                className="absolute top-0 md:-right-16 right-0 p-4 sm:p-6"
+                            />
                         </Dialog.Panel>
                     </Dialog>
                 </>

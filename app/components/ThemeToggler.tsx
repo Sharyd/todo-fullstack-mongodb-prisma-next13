@@ -1,24 +1,30 @@
+'use client'
 import React, { useContext } from 'react'
 import { ThemeContext, Theme } from '../store/themeContext'
 import { motion } from 'framer-motion'
 
-const ThemeToggler = () => {
+interface Props {
+    className?: string
+}
+
+const ThemeToggler = ({ className }: Props) => {
     const { theme, setTheme } = useContext(ThemeContext)
     const handleToggleTheme = () => {
         setTheme(theme === Theme.light ? Theme.dark : Theme.light)
     }
 
     return (
-        <button onClick={handleToggleTheme}>
+        <button type="button" onClick={handleToggleTheme}>
             <motion.img
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ rotate: 360, scale: 0.9 }}
                 src={`${
-                    theme === Theme.light
+                    theme === Theme.dark
                         ? ' /images/icon-sun.svg'
                         : ' /images/icon-moon.svg'
                 } `}
                 alt={`${theme === Theme.light ? 'icon-sun' : 'icon-moon'}`}
+                className={className}
             />
         </button>
     )

@@ -10,7 +10,12 @@ import Card from '../ui/Card'
 import Actions from './Actions'
 import { useTodoContext } from '@/app/store/todoContextProvider'
 import ActionsMobile from './ActionsMobile'
-import { getTodos, updateDragTodos, updateTodos } from '@/app/utils/endpoints'
+import {
+    getTodos,
+    getUsers,
+    updateDragTodos,
+    updateTodos,
+} from '@/app/utils/endpoints'
 
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Todo as TodoType } from '../../utils/types'
@@ -25,6 +30,7 @@ import useTodoMutation from '@/app/hooks/useTodoMutation'
 import useTodosMutation from '@/app/hooks/useTodosMutation'
 import useLocalStorage from '@/app/hooks/useLocalStorage'
 import axios from 'axios'
+import { get } from 'http'
 
 interface Props {
     isFullstackWay: boolean
@@ -40,6 +46,8 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
         isFetching,
     } = useQuery<TodoType[]>('todos', getTodos)
 
+    const { data: users } = useQuery('users', getUsers)
+    console.log(users)
     const filteredDbTodos = useCallback<any>(
         dbtodos?.filter((todo) => {
             return validateFilters(dbFilters, todo.completed)
@@ -50,7 +58,7 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
     const [dragTodosdb, setDragTodosdb] = useState<TodoType[]>(
         filteredDbTodos ?? []
     )
-    const [dragTodos, setDragTodos] = useState<TodoType[]>(todos ?? [])
+    console.log(dbtodos)
     const queryClient = useQueryClient()
 
     const updateDragTodoMutation = useMutation(updateDragTodos, {
@@ -68,10 +76,6 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
                     todo: dragTodosdb,
                 })
             }
-        } else {
-            cleanup = () => {
-                setTodos(dragTodos)
-            }
         }
 
         window.addEventListener('beforeunload', cleanup)
@@ -79,7 +83,7 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
         return () => {
             window.removeEventListener('beforeunload', cleanup)
         }
-    }, [dragTodosdb, dragTodos, isFullstackWay, updateDragTodoMutation])
+    }, [dragTodosdb, todos, isFullstackWay, updateDragTodoMutation])
 
     useEffect(() => {
         if (isFullstackWay) {
@@ -92,7 +96,7 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
 
     const moveTodo = useCallback(
         (dragIndex: number, hoverIndex: number) => {
-            ;(isFullstackWay ? setDragTodosdb : setDragTodos)(
+            ;(isFullstackWay ? setDragTodosdb : setTodos)(
                 (prevCards: TodoType[] | undefined) =>
                     update(prevCards as TodoType[], {
                         $splice: [
@@ -107,7 +111,7 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
 
     return (
         <Container>
-            <div className="flex flex-col py-32 w-[400px] z-20 sm:w-[550px]  ">
+            <div className="flex flex-col py-32 w-[400px] z-20 sm:w-[600px]  ">
                 <div className="flex flex-col gap-10">
                     <div className="flex h-full justify-between items-start">
                         <Heading>Todo</Heading>
@@ -119,7 +123,7 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
                     />
                     <div className="flex gap-4 flex-col sm:gap-0">
                         <Card>
-                            {(isFullstackWay ? dragTodosdb : dragTodos)?.map(
+                            {(isFullstackWay ? dragTodosdb : todos)?.map(
                                 (todo: TodoType, idx: number) => (
                                     <Todo
                                         key={todo.todoId}

@@ -6,7 +6,7 @@ import { useTodoContext } from '@/app/store/todoContextProvider'
 import { HiOutlinePencilAlt, HiCheck } from 'react-icons/hi'
 import { deleteTodos, updateTodos } from '@/app/utils/endpoints'
 import axios from 'axios'
-import { Todo as TodoType } from '@/app/utils/types'
+import { Todo as TodoType, loggedUserType } from '@/app/utils/types'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 import useTodoMutation from '@/app/hooks/useTodoMutation'
@@ -17,6 +17,8 @@ import { IoMdClose } from 'react-icons/io'
 import type { Identifier, XYCoord } from 'dnd-core'
 import { DropTargetMonitor, useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from '@/app/utils/types'
+import { handleTodoErrorMessage } from '@/app/utils/helpers'
+import { useSession } from 'next-auth/react'
 
 export interface DragItem {
     index: number
@@ -32,14 +34,16 @@ interface Props {
 }
 
 const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
+    const { data: session } = useSession()
     const ref = useRef<HTMLDivElement>(null)
     const { removeTodo, updateTodo } = useTodoContext()
     const inputRef = useRef<HTMLInputElement | null>(null)
     const [isActiveUpdate, setIsActiveUpdate] = useState(false)
     const [newTitle, setNewTitle] = useState('')
-    const { todoId, title, completed } = todo
-
+    const { todoId, title, completed, id, userId } = todo
     const queryClient = useQueryClient()
+
+    const user = session?.user as loggedUserType | undefined
 
     const { todoMutation: updateTodoMutation, isLoading: updateLoading } =
         useTodoMutation('updateTodo', updateTodos, queryClient)
@@ -60,25 +64,27 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                 ? deleteTodoMutation.mutate(todo, {
                       onSuccess: () => {
                           successToast(
-                              `Succesfully removed`,
+                              `Successfully removed`,
                               <IoMdClose className="bg-red-500 rounded-full w-4 h-4 text-white" />
                           )
                       },
-                      onError: (err) => {
-                          errorToast(`Something went wrong: ${err}`)
+                      onError: (error: any) => {
+                          handleTodoErrorMessage(
+                              error.status,
+                              error.message,
+                              'delete'
+                          )
                       },
                   })
                 : removeTodo(todo.todoId as string)
         },
-
         [todoId, removeTodo]
     )
 
     const handleUpdateTodo = () => {
         const newTodo: TodoType = {
-            todoId: todoId,
+            ...todo,
             title: newTitle,
-            completed: completed,
         }
 
         isFullstackWay
@@ -87,11 +93,15 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                       queryClient.invalidateQueries('todos')
                       successToast(`${newTodo.title} succesfully updated`)
                   },
-                  onError: (err) => {
-                      errorToast(`Something went wrong: ${err}`)
+                  onError: (error: any) => {
+                      handleTodoErrorMessage(
+                          error.status,
+                          error.message,
+                          'update'
+                      )
                   },
               })
-            : updateTodo(todoId, newTitle)
+            : updateTodo(id, newTitle)
     }
 
     const [{ handlerId }, drop] = useDrop<
@@ -111,7 +121,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
             }
             const dragIndex = item.index
             const hoverIndex = index
-            console.log(hoverIndex)
+
             // Don't replace items with themselves
             if (dragIndex === hoverIndex) {
                 return
@@ -170,12 +180,18 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
     const opacity = isDragging ? 0 : 1
 
     drag(drop(ref))
-    console.log(handlerId)
+
+    if (!user) return null
+
     return (
         <div
             ref={ref}
             data-handler-id={handlerId}
-            className="w-full group cursor-move justify-between border-b-[1px] border-veryDarkGrayishBlue p-4 relative items-center  bg-secondaryBackground h-full gap-4 flex"
+            className={`${
+                user?.userId === userId
+                    ? 'border rounded-md border-primaryBlue'
+                    : 'border-b-[1px] border-veryDarkGrayishBlue'
+            } w-full group cursor-move justify-between  bg-secondaryBackground p-4 relative items-center h-full gap-4 flex`}
         >
             {updateLoading || deleteLoading ? (
                 <div className="flex justify-center w-full h-max">
@@ -252,6 +268,11 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                             />
                         </button>
                     </div>
+                    {user.userId !== userId && (
+                        <p className="group-hover:hidden capitalize">
+                            {todo.userName}
+                        </p>
+                    )}
                 </>
             )}
         </div>

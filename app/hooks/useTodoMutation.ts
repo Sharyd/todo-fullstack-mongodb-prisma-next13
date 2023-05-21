@@ -13,27 +13,27 @@ const useTodoMutation = (
 
         onMutate: async (newTodo: Todo) => {
             await queryClient.cancelQueries({
-                queryKey: ['todos', newTodo.todoId],
+                queryKey: ['todos', newTodo.id],
             })
 
             const previousTodo = queryClient.getQueryData<Todo>([
                 'todos',
-                newTodo.todoId,
+                newTodo.id,
             ])
-            queryClient.setQueryData(['todos', newTodo.todoId], newTodo)
+            queryClient.setQueryData(['todos', newTodo.id], newTodo)
             return { previousTodo, newTodo }
         },
 
         onError: (err, newTodo, context) => {
             queryClient.setQueryData(
-                ['todos', context?.newTodo.todoId],
+                ['todos', context?.newTodo.id],
                 context?.previousTodo
             )
         },
 
         onSettled: (newTodo: Todo | any) => {
             queryClient.invalidateQueries({
-                queryKey: ['todos', newTodo?.todoId],
+                queryKey: ['todos', newTodo?.id],
             })
         },
     })
