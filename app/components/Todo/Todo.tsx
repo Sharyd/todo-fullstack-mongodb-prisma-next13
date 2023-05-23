@@ -19,6 +19,9 @@ import { DropTargetMonitor, useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from '@/app/utils/types'
 import { handleTodoErrorMessage } from '@/app/utils/helpers'
 import { useSession } from 'next-auth/react'
+import { AiOutlineUserAdd } from 'react-icons/ai'
+import AddPermission from '../permission/AddPermission'
+import { Modal } from '../ui/modals/Modal'
 
 export interface DragItem {
     index: number
@@ -42,6 +45,8 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
     const [newTitle, setNewTitle] = useState('')
     const { todoId, title, completed, id, userId } = todo
     const queryClient = useQueryClient()
+
+    const [openPermissionModal, setOpenPermissionModal] = useState(false)
 
     const user = session?.user as loggedUserType | undefined
 
@@ -184,98 +189,119 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
     if (!user) return null
 
     return (
-        <div
-            ref={ref}
-            data-handler-id={handlerId}
-            className={`${
-                user?.userId === userId
-                    ? 'border rounded-md border-primaryBlue'
-                    : 'border-b-[1px] border-veryDarkGrayishBlue'
-            } w-full group cursor-move justify-between  bg-secondaryBackground p-4 relative items-center h-full gap-4 flex`}
-        >
-            {updateLoading || deleteLoading ? (
-                <div className="flex justify-center w-full h-max">
-                    <Loader size={30} />
-                </div>
-            ) : (
-                <>
-                    <div className="flex gap-4 items-center">
-                        <ButtonChecked
-                            todoId={todoId}
-                            completed={completed}
-                            todo={todo}
-                            isfullstackWay={isFullstackWay}
-                        />
-                        {!isActiveUpdate && (
-                            <p
-                                className={`bg-transparent w-full  ${
-                                    completed
-                                        ? 'line-through text-darkGrayishBlue'
-                                        : ''
-                                }`}
-                            >
-                                {title}
-                            </p>
-                        )}
-                        {isActiveUpdate && (
-                            <input
-                                ref={inputRef}
-                                onChange={(e) => {
-                                    setNewTitle(e.target.value)
-                                }}
-                                type="text"
-                                className={`bg-transparent outline outline-primaryBlue w-full outline-none cursor-pointer ${
-                                    completed
-                                        ? 'line-through text-darkGrayishBlue'
-                                        : ''
-                                }`}
-                                value={newTitle}
-                            />
-                        )}
+        <>
+            <div
+                ref={ref}
+                data-handler-id={handlerId}
+                className={`${
+                    user?.userId === userId
+                        ? 'border rounded-md border-primaryBlue'
+                        : 'border-b-[1px] border-veryDarkGrayishBlue'
+                } w-full group cursor-move justify-between  bg-secondaryBackground p-4 relative items-center h-full gap-4 flex`}
+            >
+                {updateLoading || deleteLoading ? (
+                    <div className="flex justify-center w-full h-max">
+                        <Loader size={30} />
                     </div>
-                    <div className="flex gap-4 items-center">
-                        <div
-                            className="flex items-center"
-                            onClick={() => {
-                                handleFocus()
-                            }}
-                        >
-                            {!isActiveUpdate ? (
-                                <button onClick={() => setIsActiveUpdate(true)}>
-                                    <HiOutlinePencilAlt className="hidden text-primaryBlue  h-5 w-5 group-hover:block" />
-                                </button>
-                            ) : (
-                                <button>
-                                    <HiCheck
-                                        onClick={() => {
-                                            handleUpdateTodo()
-                                            setIsActiveUpdate(false)
-                                        }}
-                                        className="hidden text-primaryBlue  h-6 w-6 group-hover:block"
-                                    />
-                                </button>
+                ) : (
+                    <>
+                        <div className="flex gap-4 items-center">
+                            <ButtonChecked
+                                todoId={todoId}
+                                completed={completed}
+                                todo={todo}
+                                isfullstackWay={isFullstackWay}
+                            />
+                            {!isActiveUpdate && (
+                                <p
+                                    className={`bg-transparent w-full  ${
+                                        completed
+                                            ? 'line-through text-darkGrayishBlue'
+                                            : ''
+                                    }`}
+                                >
+                                    {title}
+                                </p>
+                            )}
+                            {isActiveUpdate && (
+                                <input
+                                    ref={inputRef}
+                                    onChange={(e) => {
+                                        setNewTitle(e.target.value)
+                                    }}
+                                    type="text"
+                                    className={`bg-transparent outline outline-primaryBlue w-full outline-none cursor-pointer ${
+                                        completed
+                                            ? 'line-through text-darkGrayishBlue'
+                                            : ''
+                                    }`}
+                                    value={newTitle}
+                                />
                             )}
                         </div>
-                        <button
-                            onClick={() => {
-                                handleDelete(todo)
-                            }}
-                            className="hidden cursor-pointer    group-hover:block"
-                        >
-                            <img
-                                className="fill-blue-600"
-                                src="images/icon-cross.svg"
-                            />
-                        </button>
-                    </div>
-                    {user.userId !== userId && (
-                        <p className="group-hover:hidden capitalize">
-                            {todo.userName}
-                        </p>
-                    )}
-                </>
+                        {userId === user.userId && (
+                            <div className="flex gap-4 items-center">
+                                <button
+                                    onClick={() => setOpenPermissionModal(true)}
+                                    className="text-primaryBlue block md:hidden  h-5 w-5 group-hover:block"
+                                >
+                                    <AiOutlineUserAdd className="w-5 h-5 object-cover" />
+                                </button>
+                                <div
+                                    className="flex items-center"
+                                    onClick={() => {
+                                        handleFocus()
+                                    }}
+                                >
+                                    {!isActiveUpdate ? (
+                                        <button
+                                            onClick={() =>
+                                                setIsActiveUpdate(true)
+                                            }
+                                        >
+                                            <HiOutlinePencilAlt className="block md:hidden text-primaryBlue  h-5 w-5 group-hover:block" />
+                                        </button>
+                                    ) : (
+                                        <button>
+                                            <HiCheck
+                                                onClick={() => {
+                                                    handleUpdateTodo()
+                                                    setIsActiveUpdate(false)
+                                                }}
+                                                className="block md:hidden text-primaryBlue  h-6 w-6 group-hover:block"
+                                            />
+                                        </button>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        handleDelete(todo)
+                                    }}
+                                    className="block md:hidden cursor-pointer    group-hover:block"
+                                >
+                                    <img
+                                        className="fill-primaryBlue"
+                                        src="images/icon-cross.svg"
+                                    />
+                                </button>
+                            </div>
+                        )}
+                        {user.userId !== userId && (
+                            <p className="capitalize">{todo.userName}</p>
+                        )}
+                    </>
+                )}
+            </div>
+            {openPermissionModal && (
+                <Modal
+                    setIsOpen={setOpenPermissionModal}
+                    isOpen={openPermissionModal}
+                    modalTitle="Add permission to manage your todos"
+                >
+                    <AddPermission setIsOpen={setOpenPermissionModal} />
+                </Modal>
             )}
-        </div>
+        </>
     )
 }
 

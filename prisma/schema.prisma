@@ -20,6 +20,7 @@ model User {
   hashedPassword  String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  
   accounts        Account[]
   todos           Todo[]
 }
@@ -34,7 +35,8 @@ model Todo {
   updatedAt       DateTime @updatedAt
   userId          String   @db.ObjectId
   userName        String?
-
+  order           Int?
+ 
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
 }
@@ -60,6 +62,7 @@ model Account {
 
 
 
-
-
-
+// model orderTodos {
+//     order Int
+//     userId String
+// }

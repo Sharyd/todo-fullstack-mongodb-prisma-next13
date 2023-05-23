@@ -2,10 +2,11 @@
 import { Fragment, useContext, useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { BsChevronLeft } from 'react-icons/bs'
-import { ThemeContext } from '../../store/themeContext'
+import { ThemeContext } from '../../../store/themeContext'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { HighlightButton, MainButton } from './Button'
+import { HighlightButton, MainButton } from '../Button'
+import { sideAnimation } from '@/app/utils/animation'
 
 interface Props {
     isFullstackWay: boolean

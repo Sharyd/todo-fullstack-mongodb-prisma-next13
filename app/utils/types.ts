@@ -15,6 +15,15 @@ export interface draggedTodo {
     index: number
 }
 
+export interface userType {
+    name?: string | null | undefined
+    email?: string | null | undefined
+    image?: string | null | undefined
+    id?: string | null | undefined
+    createdAt?: string | null | undefined
+    updatedAt?: string | null | undefined
+}
+
 export interface loggedUserType {
     name?: string | null | undefined
     email?: string | null | undefined

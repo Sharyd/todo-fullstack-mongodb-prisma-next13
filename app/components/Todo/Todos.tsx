@@ -18,7 +18,7 @@ import {
 } from '@/app/utils/endpoints'
 
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { Todo as TodoType } from '../../utils/types'
+import { Todo as TodoType, userType } from '../../utils/types'
 import Loader from '../ui/Loader'
 import { PuffLoader } from 'react-spinners'
 import {
@@ -26,11 +26,9 @@ import {
     isAllTodosCompleted,
     validateFilters,
 } from '@/app/utils/helpers'
-import useTodoMutation from '@/app/hooks/useTodoMutation'
-import useTodosMutation from '@/app/hooks/useTodosMutation'
-import useLocalStorage from '@/app/hooks/useLocalStorage'
-import axios from 'axios'
-import { get } from 'http'
+import SelectUser from '../users/SelectUser'
+import { HighlightButton } from '../ui/Button'
+import { BsChevronRight } from 'react-icons/bs'
 
 interface Props {
     isFullstackWay: boolean
@@ -40,14 +38,14 @@ interface Props {
 const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
     const { todos, filter, setTodos } = useTodoContext()
     const [dbFilters, setDbFilters] = useState('all')
+    const [selected, setSelected] = useState<userType>({ name: 'Select User' })
+
     const {
         data: dbtodos,
         isLoading,
         isFetching,
     } = useQuery<TodoType[]>('todos', getTodos)
 
-    const { data: users } = useQuery('users', getUsers)
-    console.log(users)
     const filteredDbTodos = useCallback<any>(
         dbtodos?.filter((todo) => {
             return validateFilters(dbFilters, todo.completed)
@@ -58,7 +56,7 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
     const [dragTodosdb, setDragTodosdb] = useState<TodoType[]>(
         filteredDbTodos ?? []
     )
-    console.log(dbtodos)
+
     const queryClient = useQueryClient()
 
     const updateDragTodoMutation = useMutation(updateDragTodos, {
@@ -109,22 +107,44 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
         [isFullstackWay]
     )
 
+    const filterDBTodosBySelectedUser = dragTodosdb?.filter((todo) => {
+        return todo.userId === selected.id
+    })
+
     return (
         <Container>
             <div className="flex flex-col py-32 w-[400px] z-20 sm:w-[600px]  ">
-                <div className="flex flex-col gap-10">
+                <div className="flex relative flex-col gap-10">
+                    {isFullstackWay && (
+                        <div className="absolute -top-2 right-16 w-40 z-30">
+                            <SelectUser
+                                selected={selected}
+                                setSelected={setSelected}
+                            />
+                        </div>
+                    )}
                     <div className="flex h-full justify-between items-start">
                         <Heading>Todo</Heading>
                         <ThemeToggler />
                     </div>
+                    <p>
+                        Select a user to view their todos or grant them
+                        permission to manage your todos.
+                    </p>
+
                     <CreateTodo
                         isAllCompletedDb={isAllCompletedDb}
                         isFullstackWay={isFullstackWay}
                     />
                     <div className="flex gap-4 flex-col sm:gap-0">
                         <Card>
-                            {(isFullstackWay ? dragTodosdb : todos)?.map(
-                                (todo: TodoType, idx: number) => (
+                            <>
+                                {(isFullstackWay
+                                    ? selected.id
+                                        ? filterDBTodosBySelectedUser
+                                        : dragTodosdb
+                                    : todos
+                                )?.map((todo: TodoType, idx: number) => (
                                     <Todo
                                         key={todo.todoId}
                                         todo={todo}
@@ -132,13 +152,15 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
                                         isFullstackWay={isFullstackWay}
                                         moveTodo={moveTodo}
                                     />
-                                )
-                            )}
+                                ))}
+                            </>
+
                             {isFetching && isFullstackWay && isLoading && (
                                 <div className="flex items-center justify-center">
                                     <Loader size={50} />
                                 </div>
                             )}
+
                             <Actions
                                 isFullstackWay={isFullstackWay}
                                 dbFilters={dbFilters}

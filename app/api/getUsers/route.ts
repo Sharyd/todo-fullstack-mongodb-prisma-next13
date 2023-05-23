@@ -10,9 +10,20 @@ export async function GET(request: NextRequest, response: NextApiResponse) {
                 createdAt: 'desc',
             },
         })
+        const mappedUsers = users.map((user) => {
+            return {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+                image: user.image,
+            }
+        })
+
         if (!users) return NextResponse.json({ error: 'No users found' })
 
-        return NextResponse.json(users)
+        return NextResponse.json(mappedUsers)
     } catch (error: any) {
         return NextResponse.json({ error: error.message })
     }
