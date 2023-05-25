@@ -87,7 +87,6 @@ export const authOptions: AuthOptions = {
             const token = params.token
             const userId = token?.sub
             const userInfo = session.user
-
             const updatedUser: loggedUserType = {
                 ...userInfo,
                 userId,

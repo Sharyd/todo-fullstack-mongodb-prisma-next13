@@ -16,6 +16,7 @@ import ImageInput from '../components/ui/ImageInput'
 const Register = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [image, setImage] = useState<string | null>(null)
+
     const router = useRouter()
     const {
         register,
@@ -32,9 +33,10 @@ const Register = () => {
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true)
+        const base64Image = image?.split(',')[1]
 
         axios
-            .post('/api/register', { ...data, image })
+            .post('/api/register', { ...data, image: base64Image })
             .then(() => {
                 successToast('Registered successfully. Login to your account')
             })

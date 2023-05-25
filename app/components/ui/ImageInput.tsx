@@ -10,8 +10,10 @@ interface ImageInputProps {
 
 const ImageInput: React.FC<ImageInputProps> = ({ onImageChange }) => {
     const [previewSource, setPreviewSource] = useState<string | null>(null)
+
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const [fileName, setFileName] = useState<string | null>(null)
+
     const fileInputRef = useRef<HTMLInputElement>(null)
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]

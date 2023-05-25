@@ -4,7 +4,11 @@ import ButtonChecked from '../ButtonChecked'
 import { useTodoContext } from '@/app/store/todoContextProvider'
 
 import { HiOutlinePencilAlt, HiCheck } from 'react-icons/hi'
-import { deleteTodos, updateTodos } from '@/app/utils/endpoints'
+import {
+    deleteTodos,
+    getUserPermissionsIds,
+    updateTodos,
+} from '@/app/utils/endpoints'
 import axios from 'axios'
 import { Todo as TodoType, loggedUserType } from '@/app/utils/types'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -22,6 +26,7 @@ import { useSession } from 'next-auth/react'
 import { AiOutlineUserAdd } from 'react-icons/ai'
 import AddPermission from '../permission/AddPermission'
 import { Modal } from '../ui/modals/Modal'
+import { get } from 'http'
 
 export interface DragItem {
     index: number
@@ -45,6 +50,11 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
     const [newTitle, setNewTitle] = useState('')
     const { todoId, title, completed, id, userId } = todo
     const queryClient = useQueryClient()
+
+    const { data } = useQuery(['permissions', userId], () =>
+        getUserPermissionsIds(userId as string)
+    )
+    console.log(data)
 
     const [openPermissionModal, setOpenPermissionModal] = useState(false)
 
@@ -185,7 +195,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
     const opacity = isDragging ? 0 : 1
 
     drag(drop(ref))
-
+    console.log(user)
     if (!user) return null
 
     return (

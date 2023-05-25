@@ -56,7 +56,7 @@ export const updateDragTodos = async (
 export const completeTodos = async (
     todo: Todo
 ): Promise<AxiosResponse<Todo>> => {
-    const url = createTodoApiUrl(`todoCompleted/${todo.todoId}`)
+    const url = createTodoApiUrl(`todoCompleted/${todo.id}`)
     return handleRequest(axios.put(url, todo))
 }
 
@@ -71,5 +71,14 @@ export const deleteTodos = async (todo: Todo): Promise<AxiosResponse<Todo>> => {
 // user
 export const getUsers = async () => {
     const url = createTodoApiUrl('getUsers')
+    return handleRequest(axios.get(url))
+}
+
+export const addUserPermission = async (userId: string) => {
+    const url = createTodoApiUrl('user/userPermission')
+    return handleRequest(axios.post(url, { userId }))
+}
+export const getUserPermissionsIds = async (userId: string) => {
+    const url = createTodoApiUrl(`user/userPermission/${userId}`)
     return handleRequest(axios.get(url))
 }

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '../../../utils/prismadb'
-import { NextApiRequest } from 'next'
 import getLoggedUser from '@/app/sessions/getLoggedUser'
-import { Todo } from '@prisma/client'
 
 export async function PUT(
     request: NextRequest,
@@ -19,23 +17,24 @@ export async function PUT(
 
     if (!loggedUser) {
         return NextResponse.json(
-            { error: 'You must be logged in to update a todo' },
+            { error: 'You must be logged in to complete a todo' },
             { status: 401 }
         )
     }
 
     if (loggedUser.id !== body.userId) {
-        // Fetch the user to check if they have permission to update the todo
+        // Fetch the user to check if they have permission to complete the todo
         const user = await prisma.user.findUnique({
             where: { id: loggedUser.id },
             select: { permissions: true },
         })
 
-        // Check if the user has permission to update the todo
+        // Check if the user has permission to complete the todo
         const hasPermission = user?.permissions?.includes(body.userId)
+
         if (!hasPermission) {
             return NextResponse.json(
-                { error: 'You do not have permission to update this todo' },
+                { error: 'You do not have permission to complete this todo' },
                 { status: 403 }
             )
         }
@@ -49,13 +48,13 @@ export async function PUT(
     }
 
     try {
-        const todo = await prisma.todo.updateMany({
+        const todo = await prisma.todo.update({
             where: {
                 id: id,
-                userId: body.userId,
+                // userId: body.userId,
             },
             data: {
-                title: body.title, // Update only the title field
+                completed: !body.completed,
             },
         })
 
@@ -63,7 +62,7 @@ export async function PUT(
     } catch (error) {
         console.error(error)
         return NextResponse.json(
-            { error: 'Failed to update the todo' },
+            { error: 'Failed to complete the todo' },
             { status: 500 }
         )
     }

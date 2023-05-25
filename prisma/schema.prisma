@@ -20,7 +20,7 @@ model User {
   hashedPassword  String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  
+  permissions     String[]
   accounts        Account[]
   todos           Todo[]
 }
@@ -62,7 +62,3 @@ model Account {
 
 
 
-// model orderTodos {
-//     order Int
-//     userId String
-// }
