@@ -33,3 +33,8 @@ export const handleTodoErrorMessage = (
         errorToast(`Something went wrong: ${message}`)
     }
 }
+
+//USER
+export const getFirstName = (name: string) => {
+    return name.split(' ')[0]
+}

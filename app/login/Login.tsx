@@ -10,7 +10,7 @@ import Link from 'next/link'
 import Providers from '../components/auth/Providers'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import ThemeToggler from '../components/ThemeToggler'
+import ThemeToggler from '../components/theme/ThemeToggler'
 
 const Login = () => {
     const router = useRouter()

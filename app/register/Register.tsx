@@ -8,12 +8,14 @@ import Input from '../components/ui/Input'
 import Card from '../components/ui/Card'
 import Link from 'next/link'
 import Providers from '../components/auth/Providers'
-import ThemeToggler from '../components/ThemeToggler'
+import ThemeToggler from '../components/theme/ThemeToggler'
 import { clear } from 'console'
 import { useRouter } from 'next/navigation'
+import ImageInput from '../components/ui/ImageInput'
 
 const Register = () => {
     const [isLoading, setIsLoading] = useState(false)
+    const [image, setImage] = useState<string | null>(null)
     const router = useRouter()
     const {
         register,
@@ -32,7 +34,7 @@ const Register = () => {
         setIsLoading(true)
 
         axios
-            .post('/api/register', data)
+            .post('/api/register', { ...data, image })
             .then(() => {
                 successToast('Registered successfully. Login to your account')
             })
@@ -82,8 +84,10 @@ const Register = () => {
                         placeholderText="********"
                         required
                     />
-                    <Input id="submit" type="submit" label="Register" />
-
+                    <div className="flex mt-2  flex-col gap-4 w-full">
+                        <ImageInput onImageChange={setImage} />
+                        <Input id="submit" type="submit" label="Register" />
+                    </div>
                     <div className="flex flex-col gap-6 w-full">
                         <p className="flex py-3 justify-center items-center gap-2 p-2">
                             Do you already have account?

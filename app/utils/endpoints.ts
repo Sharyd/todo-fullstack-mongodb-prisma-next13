@@ -18,6 +18,8 @@ const handleRequest = async <T>(request: Promise<AxiosResponse<T>>) => {
         throw errorWithStatus
     }
 }
+
+// Todos
 export const sendTodos = async (todo: Todo) => {
     if (!todo) return null
     const url = createTodoApiUrl('todos')

@@ -1,6 +1,6 @@
 'use client'
 import React, { useContext } from 'react'
-import { ThemeContext, Theme } from '../store/themeContext'
+import { ThemeContext, Theme } from '../../store/themeContext'
 import { motion } from 'framer-motion'
 
 interface Props {

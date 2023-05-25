@@ -3,14 +3,13 @@ import './globals.css'
 import { Josefin_Sans } from 'next/font/google'
 import { ThemeProvider } from './store/themeContextProvider'
 import { TodoProvider } from './store/todoContextProvider'
-import Theme from './components/Theme'
+import Theme from './components/theme/Theme'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Toaster } from 'react-hot-toast'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import GradientImage from './components/GradientImage'
 import Hydrate from './components/Hydrate'
-import { SessionProvider, useSession } from 'next-auth/react'
 
 const JosefinSans = Josefin_Sans({ subsets: ['latin'] })
 

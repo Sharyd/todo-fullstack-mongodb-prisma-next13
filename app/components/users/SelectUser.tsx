@@ -13,9 +13,10 @@ import { userType } from '@/app/utils/types'
 interface Props {
     selected: any
     setSelected: React.Dispatch<React.SetStateAction<any>>
+    absolute?: string
 }
 
-export default function SelectUser({ selected, setSelected }: Props) {
+export default function SelectUser({ selected, setSelected, absolute }: Props) {
     const { data, isLoading, isError } = useQuery('users', getUsers)
 
     if (isLoading) {
@@ -59,7 +60,9 @@ export default function SelectUser({ selected, setSelected }: Props) {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <Listbox.Options className="mt-1 max-h-60 w-full overflow-auto rounded-md bg-secondaryBackground py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    <Listbox.Options
+                        className={`mt-1 ${absolute} max-h-60 w-full  overflow-auto rounded-md bg-secondaryBackground py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
+                    >
                         {data.map((person: userType, personIdx: number) => (
                             <Listbox.Option
                                 key={personIdx}
@@ -83,7 +86,7 @@ export default function SelectUser({ selected, setSelected }: Props) {
                                             {person.name}
                                         </span>
                                         {selected ? (
-                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primaryBlue">
+                                            <span className="inset-y-0 absolute left-0 flex items-center pl-3 text-primaryBlue">
                                                 <AiOutlineCheck
                                                     className="h-5 w-5"
                                                     aria-hidden="true"

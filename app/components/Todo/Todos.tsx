@@ -3,7 +3,7 @@ import update from 'immutability-helper'
 import React, { Suspense, use, useCallback, useEffect, useState } from 'react'
 import Container from '../Container'
 import Heading from '../ui/Heading'
-import ThemeToggler from '../ThemeToggler'
+import ThemeToggler from '../theme/ThemeToggler'
 import CreateTodo from './CreateTodo'
 import Todo, { DragItem } from './Todo'
 import Card from '../ui/Card'
@@ -115,17 +115,20 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
         <Container>
             <div className="flex flex-col py-32 w-[400px] z-20 sm:w-[600px]  ">
                 <div className="flex relative flex-col gap-10">
-                    {isFullstackWay && (
-                        <div className="absolute -top-2 right-16 w-40 z-30">
-                            <SelectUser
-                                selected={selected}
-                                setSelected={setSelected}
-                            />
+                    <div className="flex flex-col-reverse justify-center gap-4">
+                        {isFullstackWay && (
+                            <div className="md:absolute -top-2 right-16 w-40 z-30">
+                                <SelectUser
+                                    absolute={'absolute'}
+                                    selected={selected}
+                                    setSelected={setSelected}
+                                />
+                            </div>
+                        )}
+                        <div className="flex h-full justify-between items-start">
+                            <Heading>Todo</Heading>
+                            <ThemeToggler />
                         </div>
-                    )}
-                    <div className="flex h-full justify-between items-start">
-                        <Heading>Todo</Heading>
-                        <ThemeToggler />
                     </div>
                     <p>
                         Select a user to view their todos or grant them
