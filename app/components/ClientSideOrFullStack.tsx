@@ -37,7 +37,7 @@ const ClientSideOrFullStack = ({
                 onClick={() => setIsOpen(false)}
                 type="button"
                 label={<BsChevronLeft />}
-                className="absolute top-0 md:-right-16 right-0 p-4 sm:p-6"
+                className="bg-primaryBlue absolute top-0 md:-right-16 right-0 p-4 sm:p-6"
             />
         </div>
     )

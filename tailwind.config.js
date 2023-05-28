@@ -19,7 +19,7 @@ module.exports = {
     plugins: [
         createThemes({
             light: {
-                mainBackground: 'hsl(0, 0%, 98%)',
+                mainBackground: 'hsl(0, 0%, 96%)',
                 secondaryBackground: 'hsl(0, 0%, 100%)',
                 secondaryText: 'hsl(235, 19%, 35%)',
                 darkGrayishBlue: 'hsl(236, 9%, 61%)',

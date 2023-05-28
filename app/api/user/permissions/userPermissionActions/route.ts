@@ -18,14 +18,22 @@ export async function POST(request: Request) {
             { status: 401 }
         )
     }
+    if (loggedUser.id === userId) {
+        return NextResponse.json(
+            { error: 'You cannot add permission to yourself' },
+            { status: 400 }
+        )
+    }
 
     const selectedUser = await prisma.user.findUnique({
         where: { id: userId },
-        select: { permissions: true },
+        select: { permissionsActions: true },
     })
 
     // Check if the selected user's permissions field includes the logged user's ID
-    const hasPermission = selectedUser?.permissions?.includes(loggedUser.id)
+    const hasPermission = selectedUser?.permissionsActions?.includes(
+        loggedUser.id
+    )
 
     if (hasPermission) {
         return NextResponse.json(
@@ -37,12 +45,19 @@ export async function POST(request: Request) {
     // Assuming you have a permissions field in your User model that accepts an array of userIds
     // If the permissions field does not exist, you will need to add it to your User model
     await prisma.user.update({
-        where: { id: loggedUser.id },
+        where: { id: userId },
         data: {
-            permissions: {
+            permissionsActions: {
                 // Add the selected user's ID to the permissions array
-                push: userId,
+                push: loggedUser.id,
             },
+        },
+    })
+    // Create a notification
+    await prisma.notification.create({
+        data: {
+            userId: userId,
+            message: `${loggedUser.name} has given you permission to manipulate his todos.`,
         },
     })
 

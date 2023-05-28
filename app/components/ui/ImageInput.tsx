@@ -85,7 +85,7 @@ const ImageInput: React.FC<ImageInputProps> = ({ onImageChange }) => {
                         onClick={handleModalSave}
                         type="button"
                         label={'Save'}
-                        className="capitalize w-[80%] m-auto px-7 py-3 rounded-md"
+                        className="bg-primaryBlue capitalize w-[80%] m-auto px-7 py-3 rounded-md"
                     />
 
                     <button

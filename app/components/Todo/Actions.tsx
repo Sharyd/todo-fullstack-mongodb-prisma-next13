@@ -36,8 +36,8 @@ const Actions = ({
                 queryClient.invalidateQueries('todos')
                 successToast('Completed deleted successfully')
             },
-            onError: (err) => {
-                errorToast(`Something went wrong: ${err}`)
+            onError: (error: any) => {
+                errorToast(`${error.message}`, 5000)
             },
         }
     )

@@ -10,8 +10,7 @@ const handleRequest = async <T>(request: Promise<AxiosResponse<T>>) => {
         const response = await request
         return response.data
     } catch (error: any) {
-        const errorMessage =
-            error.response?.data?.message || 'An error occurred'
+        const errorMessage = error.response?.data?.error || 'An error occurred'
         const errorStatus = error.response?.status || 500
         const errorWithStatus = new Error(errorMessage) as AxiosError
         errorWithStatus.status = errorStatus
@@ -22,41 +21,41 @@ const handleRequest = async <T>(request: Promise<AxiosResponse<T>>) => {
 // Todos
 export const sendTodos = async (todo: Todo) => {
     if (!todo) return null
-    const url = createTodoApiUrl('todos')
+    const url = createTodoApiUrl('todo/todos')
     return handleRequest(axios.post(url, todo))
 }
 
 export const getTodos = async () => {
-    const url = createTodoApiUrl('todos')
+    const url = createTodoApiUrl('todo/todos')
     return handleRequest(axios.get(url))
 }
 
 export const deleteCompletedTodos = async () => {
-    const url = createTodoApiUrl('todos')
+    const url = createTodoApiUrl('todo/todos')
     return handleRequest(axios.delete(url))
 }
 
 export const updateAllToCompletedTodos = async () => {
-    const url = createTodoApiUrl('todos')
+    const url = createTodoApiUrl('todo/todos')
     return handleRequest(axios.put(url))
 }
 
 export const updateTodos = async (todo: Todo): Promise<AxiosResponse<Todo>> => {
-    const url = createTodoApiUrl(`todoUpdate/${todo.id}`)
+    const url = createTodoApiUrl(`todo/todoUpdate/${todo.id}`)
     return handleRequest(axios.put(url, todo))
 }
 
 export const updateDragTodos = async (
     todo: any
 ): Promise<AxiosResponse<any>> => {
-    const url = createTodoApiUrl('todosReorder')
+    const url = createTodoApiUrl('todo/todosReorder')
     return handleRequest(axios.patch(url, { todo }))
 }
 
 export const completeTodos = async (
     todo: Todo
 ): Promise<AxiosResponse<Todo>> => {
-    const url = createTodoApiUrl(`todoCompleted/${todo.id}`)
+    const url = createTodoApiUrl(`todo/todoCompleted/${todo.id}`)
     return handleRequest(axios.put(url, todo))
 }
 
@@ -70,15 +69,63 @@ export const deleteTodos = async (todo: Todo): Promise<AxiosResponse<Todo>> => {
 
 // user
 export const getUsers = async () => {
-    const url = createTodoApiUrl('getUsers')
+    const url = createTodoApiUrl('user/getUsers')
+    return handleRequest(axios.get(url))
+}
+export const getUsersWithPermissionsToView = async () => {
+    const url = createTodoApiUrl('user/getUsersPermission')
+    return handleRequest(axios.get(url))
+}
+export const editUser = async (updates: object) => {
+    const url = createTodoApiUrl('user/userEdit')
+    return handleRequest(axios.patch(url, updates))
+}
+
+// Permissions
+export const addUserPermissionActions = async (userId: string) => {
+    const url = createTodoApiUrl('user/permissions/userPermissionActions')
+    return handleRequest(axios.post(url, { userId }))
+}
+
+export const removeUserPermissionActions = async (userId: string) => {
+    const url = createTodoApiUrl('user/permissions/userPermissionActions')
+    return handleRequest(axios.delete(url, { data: { userId } }))
+}
+
+// export const getUserPermissionsIds = async (userId: string) => {
+//     const url = createTodoApiUrl(`user/userPermissionActions/${userId}`)
+//     return handleRequest(axios.get(url))
+// }
+
+export const AddUserPermissionToViewTodos = async (userId: string) => {
+    const url = createTodoApiUrl('user/permissions/userPermissionToViewTodos')
+    return handleRequest(axios.post(url, { userId }))
+}
+export const getUserPermissionToViewTodos = async () => {
+    const url = createTodoApiUrl('user/permissions/userPermissionToViewTodos')
     return handleRequest(axios.get(url))
 }
 
-export const addUserPermission = async (userId: string) => {
-    const url = createTodoApiUrl('user/userPermission')
-    return handleRequest(axios.post(url, { userId }))
+export const acceptPermissionRequest = async (requestId: string) => {
+    console.log('requestId', requestId)
+    const url = createTodoApiUrl('user/permissions/acceptPermissionRequest')
+    return handleRequest(axios.post(url, { requestId }))
 }
-export const getUserPermissionsIds = async (userId: string) => {
-    const url = createTodoApiUrl(`user/userPermission/${userId}`)
+
+export const declinePermissionRequest = async (
+    requestId: string
+): Promise<any> => {
+    const url = createTodoApiUrl('user/permissions/declinePermissionRequest')
+    return handleRequest(axios.post(url, { requestId }))
+}
+
+// Notification
+export const getNotification = async () => {
+    const url = createTodoApiUrl('notification')
     return handleRequest(axios.get(url))
+}
+
+export const deleteNotification = async (id: string) => {
+    const url = createTodoApiUrl(`notification/${id}`)
+    return handleRequest(axios.delete(url))
 }

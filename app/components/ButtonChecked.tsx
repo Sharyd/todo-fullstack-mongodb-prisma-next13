@@ -47,15 +47,14 @@ const ButtonChecked = ({
     } = useTodoMutation('completeTodo', completeTodos, queryClient)
 
     const handleCompleteTodo = (todo: Todo, title: string) => {
-        console.log(isfullstackWay)
         if (isfullstackWay && todo) {
             completedTodoMutation.mutate(todo as Todo, {
                 onSuccess: () => {
                     queryClient.invalidateQueries('todos')
                     successToast(`${title} succesfully completed`)
                 },
-                onError: (err) => {
-                    errorToast(`Something went wrong: ${err}`)
+                onError: (error: any) => {
+                    errorToast(error.message)
                 },
             })
         } else {

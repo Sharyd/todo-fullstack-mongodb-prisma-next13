@@ -9,6 +9,7 @@ interface InputProps {
     placeholderText?: string
     type: string
     errors?: FieldErrors
+    className?: string
 }
 
 const Input = ({
@@ -19,6 +20,7 @@ const Input = ({
     errors,
     placeholderText,
     type,
+    className,
 }: InputProps) => {
     const [placeholder, setPlaceholder] = useState(placeholderText?.slice(0, 0))
     const [placeholderIndex, setPlaceholderIndex] = useState(0)
@@ -54,7 +56,7 @@ const Input = ({
                         ref={ref}
                         type={type}
                         className={`
-                        rounded-md p-2 text-darkGrayishBlue placeholder:text-black/30 focus:outline-darkGrayishBlue
+                        rounded-md p-2 text-black/70 placeholder:text-black/30 focus:outline-darkGrayishBlue
                          w-[95%] focus:w-[100%] m-auto  transition-all  appearance-none focus:border-none focus:ring-0 focus:outline-none
                          ${
                              errors?.[id]
@@ -70,11 +72,11 @@ const Input = ({
                 <input
                     id={id}
                     value={label}
-                    className="cursor-pointer rounded-md mt-2 p-2
+                    className={`cursor-pointer rounded-md mt-2 p-2
                     hover:text-primaryBlue
-                    w-[95%] focus:w-[100%] m-auto border-2 border-primaryBlue   transition-all border-0 appearance-none focus:border-none outline-primaryBlue focus:ring-0 focus:outline-none
+                    w-[95%] focus:w-[100%] m-auto border-2 border-primaryBlue ${className}  transition-all border-0 appearance-none focus:border-none outline-primaryBlue focus:ring-0 focus:outline-none
                     
-                    "
+                    `}
                     type={type}
                 />
             )}

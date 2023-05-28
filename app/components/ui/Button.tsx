@@ -60,7 +60,7 @@ export const HighlightButton = ({
         <button
             onClick={onClick}
             type={type}
-            className={`bg-primaryBlue text-white cursor-pointer animate-pulse hover:animate-none ${className}`}
+            className={`text-white z-50 cursor-pointer animate-pulse hover:animate-none ${className}`}
         >
             {Icon && <Icon size={24} className="left-4 top-3" />}
             {label}

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '../../utils/prismadb'
+import prisma from '../../../utils/prismadb'
 import { Todo } from '@prisma/client'
 
 export async function PATCH(request: NextRequest, response: NextResponse) {

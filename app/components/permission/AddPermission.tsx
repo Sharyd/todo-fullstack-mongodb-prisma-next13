@@ -4,41 +4,48 @@ import { Modal } from '../ui/modals/Modal'
 import SelectUser from '../users/SelectUser'
 import { userType } from '@/app/utils/types'
 import { HighlightButton } from '../ui/Button'
-import { addUserPermission } from '@/app/utils/endpoints'
+
 import { errorToast, successToast } from '@/app/utils/toast'
+import { getUsers } from '@/app/utils/endpoints'
+import { useQuery } from 'react-query'
 
 interface Props {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+    text: string
+    addPermission: (id: string) => Promise<void>
 }
 
-const AddPermission = ({ setIsOpen }: Props) => {
+const AddPermission = ({ setIsOpen, text, addPermission }: Props) => {
     const [selected, setSelected] = useState<userType>({ name: 'Select User' })
-
+    const { data, isLoading, isError } = useQuery('users', getUsers)
     const submitPermission = async () => {
         try {
-            // Call the new API function with the selected user's ID
             if (!selected?.id) return
-            await addUserPermission(selected?.id)
-            successToast('Permission added')
+            await addPermission(selected?.id)
+            successToast('Permission sent')
             setIsOpen(false)
-        } catch (error) {
-            console.error(error)
-            errorToast('Error adding permission to user')
-            // Handle error here, e.g., show error message to user
+        } catch (error: any) {
+            errorToast(error.message)
         }
     }
 
     return (
         <div className="p-2 flex flex-col gap-6">
-            <p>Select user to add permission</p>
-            <SelectUser selected={selected} setSelected={setSelected} />
+            <p>{text}</p>
+            <SelectUser
+                data={data}
+                isLoading={isLoading}
+                isError={isError}
+                selected={selected}
+                setSelected={setSelected}
+            />
 
             <div className="flex py-4 justify-around items-center ">
                 <HighlightButton
                     onClick={submitPermission}
                     type="submit"
                     label={'submit'}
-                    className="capitalize px-4 py-2 rounded-md"
+                    className=" bg-primaryBlue capitalize px-4 py-2 rounded-md"
                 />
 
                 <button

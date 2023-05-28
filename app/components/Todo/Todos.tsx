@@ -13,6 +13,7 @@ import ActionsMobile from './ActionsMobile'
 import {
     getTodos,
     getUsers,
+    getUsersWithPermissionsToView,
     updateDragTodos,
     updateTodos,
 } from '@/app/utils/endpoints'
@@ -29,6 +30,8 @@ import {
 import SelectUser from '../users/SelectUser'
 import { HighlightButton } from '../ui/Button'
 import { BsChevronRight } from 'react-icons/bs'
+import { HiUserAdd } from 'react-icons/hi'
+import { AiOutlineUserAdd } from 'react-icons/ai'
 
 interface Props {
     isFullstackWay: boolean
@@ -39,6 +42,11 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
     const { todos, filter, setTodos } = useTodoContext()
     const [dbFilters, setDbFilters] = useState('all')
     const [selected, setSelected] = useState<userType>({ name: 'Select User' })
+    const {
+        data: usersWithPermissions,
+        isLoading: isLoadingUsers,
+        isError,
+    } = useQuery('getPermissionUsers', getUsersWithPermissionsToView)
 
     const {
         data: dbtodos,
@@ -116,23 +124,27 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
             <div className="flex flex-col py-32 w-[400px] z-20 sm:w-[600px]  ">
                 <div className="flex relative flex-col gap-10">
                     <div className="flex flex-col-reverse justify-center gap-4">
-                        {isFullstackWay && (
+                        {/* {isFullstackWay && usersWithPermissions && (
                             <div className="md:absolute -top-2 right-16 w-40 z-30">
                                 <SelectUser
                                     absolute={'absolute'}
+                                    data={usersWithPermissions}
+                                    isError={isError}
+                                    isLoading={isLoadingUsers}
                                     selected={selected}
                                     setSelected={setSelected}
                                 />
                             </div>
-                        )}
+                        )} */}
                         <div className="flex h-full justify-between items-start">
                             <Heading>Todo</Heading>
                             <ThemeToggler />
                         </div>
                     </div>
-                    <p>
-                        Select a user to view their todos or grant them
-                        permission to manage your todos.
+
+                    <p className="text-white ">
+                        If u want too see todos of a specific user, send
+                        permission to the user to see his todos with
                     </p>
 
                     <CreateTodo

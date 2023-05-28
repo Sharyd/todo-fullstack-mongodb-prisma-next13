@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '../../../utils/prismadb'
+import prisma from '../../../../utils/prismadb'
 import getLoggedUser from '@/app/sessions/getLoggedUser'
 
 export async function DELETE(
@@ -30,12 +30,11 @@ export async function DELETE(
         // Fetch the user to check if they have permission to delete the todo
         const user = await prisma.user.findUnique({
             where: { id: loggedUser.id },
-            select: { permissions: true },
+            select: { permissionsActions: true },
         })
 
         // Check if the user has permission to delete the todo
-        const hasPermission = user?.permissions?.includes(userId)
-
+        const hasPermission = user?.permissionsActions?.includes(userId)
         if (!hasPermission && loggedUser.id !== userId) {
             return NextResponse.json(
                 { error: 'You do not have permission to delete this todo' },

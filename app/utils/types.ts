@@ -31,6 +31,34 @@ export interface loggedUserType {
     userId?: string | null | undefined
 }
 
+export enum status {
+    Accepted = 'Accepted',
+    Pending = 'Pending',
+    Declined = 'Declined',
+}
+
+export interface permissionRequestType {
+    filter(arg0: (request: any) => boolean): unknown
+    map(
+        arg0: (request: any, index: any) => JSX.Element
+    ): import('react').ReactNode
+    some(arg0: (request: any) => boolean): boolean
+    id?: string | null | undefined
+    fromUserId?: string | null | undefined
+    toUserId?: string | null | undefined
+    createdAt?: string | null | undefined
+    updatedAt?: string | null | undefined
+    status?: string | null | undefined
+}
+
+export interface NotificationType {
+    id: string | null | undefined
+    userId: string | null | undefined
+    message: string | null | undefined
+    createdAt?: string | null | undefined
+    updatedAt?: string | null | undefined
+}
+
 export const ItemTypes = {
     TODO: 'todo',
 }

@@ -34,7 +34,10 @@ export function Modal({
         <AnimatePresence>
             {isOpen && (
                 <>
-                    <div className="fixed inset-0 bg-black bg-opacity-50" />
+                    <div
+                        onClick={() => setIsOpen(false)}
+                        className="fixed inset-0 bg-black bg-opacity-50"
+                    />
                     <Dialog
                         key={'modal'}
                         as={motion.div}

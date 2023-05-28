@@ -5,7 +5,7 @@ import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai'
 import { BsChevronExpand } from 'react-icons/bs'
 import { useQuery } from 'react-query'
 import { get } from 'http'
-import { getUsers } from '@/app/utils/endpoints'
+
 import { PuffLoader } from 'react-spinners'
 import Loader from '../ui/Loader'
 import { userType } from '@/app/utils/types'
@@ -14,11 +14,19 @@ interface Props {
     selected: any
     setSelected: React.Dispatch<React.SetStateAction<any>>
     absolute?: string
+    data: userType[]
+    isLoading: boolean
+    isError: boolean
 }
 
-export default function SelectUser({ selected, setSelected, absolute }: Props) {
-    const { data, isLoading, isError } = useQuery('users', getUsers)
-
+export default function SelectUser({
+    selected,
+    setSelected,
+    absolute,
+    data,
+    isLoading,
+    isError,
+}: Props) {
     if (isLoading) {
         return (
             <>
@@ -28,7 +36,7 @@ export default function SelectUser({ selected, setSelected, absolute }: Props) {
     }
 
     if (isError) {
-        return <div>Error loading users</div>
+        return <div className="text-red-600">Error loading users</div>
     }
     if (!data) return null
     return (
@@ -63,7 +71,7 @@ export default function SelectUser({ selected, setSelected, absolute }: Props) {
                     <Listbox.Options
                         className={`mt-1 ${absolute} max-h-60 w-full  overflow-auto rounded-md bg-secondaryBackground py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
                     >
-                        {data.map((person: userType, personIdx: number) => (
+                        {data?.map((person: userType, personIdx: number) => (
                             <Listbox.Option
                                 key={personIdx}
                                 className={({ active }) =>
