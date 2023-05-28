@@ -76,9 +76,22 @@ export const getUsersWithPermissionsToView = async () => {
     const url = createTodoApiUrl('user/getUsersPermission')
     return handleRequest(axios.get(url))
 }
-export const editUser = async (updates: object) => {
+interface UserUpdates {
+    password?: {
+        oldPassword: string
+        newPassword: string
+    }
+    name?: string
+    image?: string
+}
+
+export const editUser = async (updates: UserUpdates) => {
     const url = createTodoApiUrl('user/userEdit')
     return handleRequest(axios.patch(url, updates))
+}
+export const deleteProfile = async (password: string) => {
+    const url = createTodoApiUrl(`user/userDelete/${password}`)
+    return handleRequest(axios.delete(url))
 }
 
 // Permissions
@@ -91,11 +104,6 @@ export const removeUserPermissionActions = async (userId: string) => {
     const url = createTodoApiUrl('user/permissions/userPermissionActions')
     return handleRequest(axios.delete(url, { data: { userId } }))
 }
-
-// export const getUserPermissionsIds = async (userId: string) => {
-//     const url = createTodoApiUrl(`user/userPermissionActions/${userId}`)
-//     return handleRequest(axios.get(url))
-// }
 
 export const AddUserPermissionToViewTodos = async (userId: string) => {
     const url = createTodoApiUrl('user/permissions/userPermissionToViewTodos')

@@ -10,6 +10,7 @@ interface InputProps {
     type: string
     errors?: FieldErrors
     className?: string
+    value?: string | null | undefined
 }
 
 const Input = ({
@@ -17,6 +18,7 @@ const Input = ({
     label,
     register,
     required,
+    value,
     errors,
     placeholderText,
     type,

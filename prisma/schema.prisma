@@ -85,8 +85,8 @@ model PermissionRequest {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   status          RequestStatus @default(Pending)
-  fromUser        User     @relation("PermissionRequestsFrom", fields: [fromUserId], references: [id])
-  toUser          User     @relation("PermissionRequestsTo", fields: [toUserId], references: [id])
+  fromUser        User     @relation("PermissionRequestsFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser          User     @relation("PermissionRequestsTo", fields: [toUserId], references: [id], onDelete: Cascade)
 
   @@unique([fromUserId, toUserId])
 }

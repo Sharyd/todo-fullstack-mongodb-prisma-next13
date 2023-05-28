@@ -29,7 +29,7 @@ export async function DELETE(request: NextRequest, response: NextApiResponse) {
     const body = await request.json()
     const { id } = JSON.parse(body)
     const loggedUser = await getLoggedUser()
-    console.log(id)
+
     if (!loggedUser) {
         return NextResponse.json(
             { message: 'No user currently logged in' },

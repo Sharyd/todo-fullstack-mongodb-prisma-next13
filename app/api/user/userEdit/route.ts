@@ -1,62 +1,78 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '../../../utils/prismadb'
+import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
-import getLoggedUser from '@/app/sessions/getLoggedUser'
+import { v2 as cloudinary } from 'cloudinary'
+import { promises as fs } from 'fs'
+import { getSession } from '@/app/sessions/getLoggedUser'
 
-export async function PATCH(request: NextRequest, response: NextApiResponse) {
-    try {
-        const loggedUser = await getLoggedUser()
-        const body = await request.json()
-        const { name, oldPassword, newPassword, image } = body
+const prisma = new PrismaClient()
 
-        let loggedUserhashedPassword = loggedUser?.hashedPassword as string
-        if (!loggedUser) {
-            return NextResponse.json({ error: 'User not logged in' })
-        }
-        // if the old password is provided
-        if (oldPassword && newPassword) {
-            const isPasswordMatch = await bcrypt.compare(
-                oldPassword,
-                loggedUser?.hashedPassword as string
-            )
-            console.log(isPasswordMatch)
-            if (!isPasswordMatch) {
-                return NextResponse.json(
-                    { error: 'Old password does not match' },
-                    { status: 400 }
-                )
-            } else {
-                // Hash the new password
-                const hashedPassword = await bcrypt.hash(newPassword, 10)
-                loggedUserhashedPassword = hashedPassword
-            }
-        }
+interface UpdateBody {
+    password?: { oldPassword: string; newPassword: string }
+    name?: string
+    image?: string
+}
 
-        // if the name is provided
-        if (name && name !== loggedUser?.name && name !== '') {
-            loggedUser.name = name
-        }
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET,
+})
 
-        // if the image is provided
-        if (image) {
-            loggedUser.image = image
-        }
-
-        // Update the user
-        await prisma.user.update({
-            where: { id: loggedUser.id },
-            data: {
-                name: loggedUser.name,
-                hashedPassword: loggedUser.hashedPassword,
-                image: loggedUser.image,
-            },
-        })
-
-        return NextResponse.json({
-            message: 'User profile updated successfully',
-        })
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
+export async function PATCH(request: NextRequest) {
+    const session: any = await getSession()
+    const userId = session?.user?.userId
+    console.log(userId)
+    if (!userId) {
+        return NextResponse.json('Not authenticated')
     }
+
+    const body: UpdateBody = JSON.parse(await request.text())
+    const { password, name, image } = body
+
+    const user: any = await prisma.user.findUnique({ where: { id: userId } })
+
+    if (!user) {
+        return NextResponse.json('User not found')
+    }
+
+    let updates: { [key: string]: any } = {}
+
+    if (password?.oldPassword && password?.newPassword) {
+        const isCorrectPassword = bcrypt.compare(
+            password.oldPassword,
+            user.hashedPassword
+        )
+        if (!isCorrectPassword) {
+            return NextResponse.json('Old password does not match')
+        }
+
+        const hashedPassword = await bcrypt.hash(password.newPassword, 12)
+        updates.hashedPassword = hashedPassword
+    }
+
+    if (name) {
+        updates.name = name
+    }
+
+    let imageUrl: string | undefined
+    if (image) {
+        const path = `${process.cwd()}/${Date.now()}.png`
+        await fs.writeFile(path, image, 'base64')
+        const result = await cloudinary.uploader.upload(path)
+        imageUrl = result.secure_url
+        await fs.unlink(path)
+        updates.image = imageUrl
+    }
+
+    if (Object.keys(updates).length === 0) {
+        return NextResponse.json('No updates provided')
+    }
+
+    const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: updates,
+    })
+
+    return NextResponse.json(updatedUser)
 }

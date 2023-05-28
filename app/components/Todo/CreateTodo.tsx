@@ -17,6 +17,7 @@ import { errorToast, successToast } from '@/app/utils/toast'
 import { error } from 'console'
 import { Modal } from '../ui/modals/Modal'
 import AddPermission from '../permission/AddPermission'
+import { HighlightButton } from '../ui/Button'
 
 interface Props {
     isFullstackWay: boolean
@@ -101,7 +102,7 @@ const CreateTodo = ({ isFullstackWay, isAllCompletedDb }: Props) => {
 
             {openPermissionModal && (
                 <Modal
-                    className="w-[400px] md:w-[500px] left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4"
+                    className="w-[400px] md:w-[500px] h-max left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4"
                     setIsOpen={setOpenPermissionModal}
                     isOpen={openPermissionModal}
                     modalTitle="Add permission"
@@ -118,11 +119,13 @@ const CreateTodo = ({ isFullstackWay, isAllCompletedDb }: Props) => {
                         opacity: 0,
                     }}
                 >
-                    <AddPermission
-                        text="With such a permission, the user will be able to view your todos and u can view his todos"
-                        addPermission={AddUserPermissionToViewTodos}
-                        setIsOpen={setOpenPermissionModal}
-                    />
+                    <div className="flex justify-center items-center h-full">
+                        <AddPermission
+                            text="With such a permission, the user will be able to view your todos and u can view his todos"
+                            addPermission={AddUserPermissionToViewTodos}
+                            setIsOpen={setOpenPermissionModal}
+                        />
+                    </div>
                 </Modal>
             )}
         </>

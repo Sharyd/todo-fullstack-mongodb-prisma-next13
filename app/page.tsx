@@ -40,6 +40,7 @@ import { set } from 'react-hook-form'
 import useReusableMutation from './hooks/useReusableMutation'
 import PermissionGranted from './components/permission/PermissionGranted'
 import EditProfile from './components/users/EditProfile'
+import DeleteProfile from './components/users/DeleteProfile'
 
 export default function Home() {
     const { data: session } = useSession()
@@ -57,6 +58,8 @@ export default function Home() {
     )
     const [isOpenNotification, setIsOpenNotification] = useState(false)
     const [isOpenProfile, setIsOpenProfile] = useState(false)
+    const [isDeleteProfile, setIsDeleteProfile] = useState(false)
+
     const queryClient = useQueryClient()
     const {
         mutation: deleteNotificationMutation,
@@ -103,9 +106,7 @@ export default function Home() {
         },
         {
             label: 'Delete Profile',
-            onClick: () => {
-                ;() => {}
-            },
+            onClick: () => setIsDeleteProfile(true),
         },
     ]
 
@@ -247,7 +248,7 @@ export default function Home() {
                     className="w-[450px] h-max  md:w-[600px] left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4 overflow-y-auto"
                     setIsOpen={setIsOpenProfile}
                     isOpen={isOpenProfile}
-                    modalTitle="My notifications"
+                    modalTitle="Edit profile"
                     initial={{
                         y: '-100%',
                         opacity: 1,
@@ -262,6 +263,29 @@ export default function Home() {
                     }}
                 >
                     <EditProfile setIsOpen={setIsOpenProfile} />
+                </Modal>
+            )}
+
+            {isDeleteProfile && (
+                <Modal
+                    className="w-[450px] h-max  md:w-[600px] left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4 overflow-y-auto"
+                    setIsOpen={setIsDeleteProfile}
+                    isOpen={isDeleteProfile}
+                    modalTitle="Delete Profile"
+                    initial={{
+                        y: '-100%',
+                        opacity: 1,
+                    }}
+                    animate={{
+                        y: 0,
+                        opacity: 1,
+                    }}
+                    exit={{
+                        y: '-100%',
+                        opacity: 0,
+                    }}
+                >
+                    <DeleteProfile setIsOpen={setIsDeleteProfile} />
                 </Modal>
             )}
         </div>

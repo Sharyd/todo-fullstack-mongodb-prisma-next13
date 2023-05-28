@@ -30,17 +30,19 @@ const AddPermission = ({ setIsOpen, text, addPermission }: Props) => {
     }
 
     return (
-        <div className="p-2 flex flex-col gap-6">
-            <p>{text}</p>
-            <SelectUser
-                data={data}
-                isLoading={isLoading}
-                isError={isError}
-                selected={selected}
-                setSelected={setSelected}
-            />
+        <div className="p-2 flex flex-col relative gap-6">
+            <div className="">
+                <p>{text}</p>
+                <SelectUser
+                    data={data}
+                    isLoading={isLoading}
+                    isError={isError}
+                    selected={selected}
+                    setSelected={setSelected}
+                />
+            </div>
 
-            <div className="flex py-4 justify-around items-center ">
+            <div className="flex mt-auto py-4 justify-around items-center">
                 <HighlightButton
                     onClick={submitPermission}
                     type="submit"

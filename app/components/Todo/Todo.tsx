@@ -29,6 +29,7 @@ import { Modal } from '../ui/modals/Modal'
 import { get } from 'http'
 import AddPermissionActions from '../permission/AddPermission'
 import AddPermission from '../permission/AddPermission'
+import { HighlightButton } from '../ui/Button'
 
 export interface DragItem {
     index: number

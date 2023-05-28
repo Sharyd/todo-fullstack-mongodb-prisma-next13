@@ -8,12 +8,20 @@ import Input from '../ui/Input'
 import { useRouter } from 'next/navigation'
 import ImageInput from '../ui/ImageInput'
 import { editUser } from '../../utils/endpoints'
+import { useSession, getSession, signIn } from 'next-auth/react'
 
-interface Props {
+interface EditProfileProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const EditProfile = ({ setIsOpen }: Props) => {
+interface FormValues {
+    name?: string
+    oldPassword?: string
+    newPassword?: string
+}
+
+const EditProfile = ({ setIsOpen }: EditProfileProps) => {
+    const { data: session, status } = useSession()
     const [isLoading, setIsLoading] = useState(false)
     const [image, setImage] = useState<string | null>(null)
 
@@ -23,31 +31,39 @@ const EditProfile = ({ setIsOpen }: Props) => {
         handleSubmit,
         reset,
         formState: { errors },
-    } = useForm<FieldValues>({
-        defaultValues: {
-            name: '',
-            oldPassword: '',
-            newPassword: '',
-        },
-    })
+    } = useForm<FormValues>()
 
-    const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setIsLoading(true)
 
         const updates: any = {}
 
         if (data.name) updates.name = data.name
         if (data.oldPassword && data.newPassword)
-            updates.password = data.newPassword
+            updates.password = {
+                oldPassword: data.oldPassword,
+                newPassword: data.newPassword,
+            }
         if (image) updates.image = image.split(',')[1]
-
         try {
-            await editUser({ ...updates, oldPassword: data.oldPassword })
+            await editUser(updates)
             successToast('Profile updated successfully')
             reset()
-            setIsOpen(false)
+
+            // Here we're signing the user in again with their new credentials to refresh their session
+            const { error } = (await signIn('credentials', {
+                redirect: false,
+                email: session?.user?.email,
+                password: data.newPassword,
+            })) as any
+
+            if (error) {
+                throw new Error(error)
+            }
+
+            router.push('/')
         } catch (error: any) {
-            errorToast(error.message)
+            errorToast(error.message || 'An error occurred')
         } finally {
             setIsLoading(false)
         }
@@ -56,7 +72,18 @@ const EditProfile = ({ setIsOpen }: Props) => {
     return (
         <div>
             <form className="relative" onSubmit={handleSubmit(onSubmit)}>
-                <h2 className="text-center text-xl py-2">Edit Your Profile</h2>
+                <div className="flex flex-col text-center gap-3 px-5">
+                    <h2 className="text-center text-xl">Edit Your Profile</h2>
+                    <p>
+                        Please note that editing your name and image are
+                        optional. However, if you wish to update either just
+                        your name or image, you will also need to provide your
+                        passwords(like old and new one you can write the old
+                        password to both fields). This is a security measure
+                        designed to confirm your identity and protect your
+                        account
+                    </p>
+                </div>
                 <div className="flex flex-col items-start w-full p-5">
                     <Input
                         id="name"
@@ -65,11 +92,12 @@ const EditProfile = ({ setIsOpen }: Props) => {
                         type="text"
                         placeholderText="Update Name"
                         errors={errors}
+                        value={session?.user?.name}
                     />
                     <Input
                         id="oldPassword"
                         register={register}
-                        label="Old Password"
+                        label="Old Password *"
                         errors={errors}
                         type="password"
                         placeholderText="Enter Old Password"
@@ -78,7 +106,7 @@ const EditProfile = ({ setIsOpen }: Props) => {
                     <Input
                         id="newPassword"
                         register={register}
-                        label="New Password"
+                        label="New Password *"
                         errors={errors}
                         type="password"
                         placeholderText="Enter New Password"
