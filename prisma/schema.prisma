@@ -85,6 +85,8 @@ model PermissionRequest {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   status          RequestStatus @default(Pending)
+  fromUserName    String?
+
   fromUser        User     @relation("PermissionRequestsFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
   toUser          User     @relation("PermissionRequestsTo", fields: [toUserId], references: [id], onDelete: Cascade)
 

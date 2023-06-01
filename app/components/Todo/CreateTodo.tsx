@@ -88,13 +88,15 @@ const CreateTodo = ({ isFullstackWay, isAllCompletedDb }: Props) => {
                     placeholder="Create a new todo..."
                     type="text"
                 />
-                <button
-                    type="button"
-                    onClick={() => setOpenPermissionModal(true)}
-                    className="hover:text-primaryBlue block h-5 w-5 group-hover:block"
-                >
-                    <AiOutlineUserAdd className="w-5 h-5 object-cover" />
-                </button>
+                {isFullstackWay && (
+                    <button
+                        type="button"
+                        onClick={() => setOpenPermissionModal(true)}
+                        className="hover:text-primaryBlue block h-5 w-5 group-hover:block"
+                    >
+                        <AiOutlineUserAdd className="w-5 h-5 object-cover" />
+                    </button>
+                )}
                 <button type="submit">
                     <AiOutlinePlus className="hover:scale-95 hover:text-primaryBlue text-2xl " />
                 </button>

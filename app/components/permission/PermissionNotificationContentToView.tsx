@@ -1,57 +1,90 @@
 import { permissionRequestType } from '@/app/utils/types'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { HighlightButton } from '../ui/Button'
 import { status } from '@/app/utils/types'
-import { Notification } from '../ui/Notification'
-import { useRouter } from 'next/navigation'
-import { useMutation, useQueryClient } from 'react-query'
-import { errorToast, successToast } from '@/app/utils/toast'
+import { NotificationCard } from '../ui/NotificationCard'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
+import Loader from '../ui/Loader'
 
 interface Props {
-    permissionRequests: permissionRequestType
+    permissionRequests: permissionRequestType | undefined
     acceptPermissionRequest: (id: string) => void
     declinePermissionRequest: (id: string) => void
+    refetchPermissionRequests: () => void
 }
 
 const PermissionNotificationContentToView = ({
     acceptPermissionRequest,
+    refetchPermissionRequests,
     declinePermissionRequest,
     permissionRequests,
 }: Props) => {
+    const data = useQuery('permissionRequests', () => permissionRequests)
+    const [expanded, setExpanded] = useState(false)
+    const queryClient = useQueryClient()
+
+    const mutationAccept = useMutation(acceptPermissionRequest as any, {
+        onSuccess: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries('todos')
+            refetchPermissionRequests()
+        },
+    })
+
+    const mutationDecline = useMutation(declinePermissionRequest as any, {
+        onSuccess: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries('todos')
+            refetchPermissionRequests()
+        },
+    })
+
     return (
-        <Notification>
-            {permissionRequests.map((request, index) => (
+        <NotificationCard>
+            {data?.data?.map((request, index) => (
                 <>
                     {request.status === status.Pending && (
-                        <li key={request.id} className="p-2">
+                        <li
+                            key={request.id + index}
+                            className="p-2 w-full m-auto text-center border-t border-primaryBlue"
+                        >
                             You have received a permission to see your todos
-                            request from {request?.fromUser?.name}.
+                            request from {request?.fromUserName}.
                             <div className="flex items-center justify-center gap-14 py-2">
-                                <HighlightButton
-                                    type="button"
-                                    label="Accept"
-                                    onClick={() => {
-                                        acceptPermissionRequest(request.id)
-                                        location.reload()
-                                    }}
-                                    className="bg-green-500 z-50 cursor-pointer hover:bg-green-600 px-5 py-2.5 rounded-md"
-                                />
-
-                                <button
-                                    onClick={() => {
-                                        declinePermissionRequest(request.id)
-                                        location.reload()
-                                    }}
-                                    className="capitalize z-50 hover:outline outline-1 px-4 py-2 rounded-md outline-red-500"
-                                >
-                                    Decline
-                                </button>
+                                {mutationAccept.isLoading ||
+                                mutationDecline.isLoading ? (
+                                    <Loader size={20} />
+                                ) : (
+                                    <>
+                                        <HighlightButton
+                                            type="button"
+                                            label="Accept"
+                                            onClick={() =>
+                                                mutationAccept.mutate(
+                                                    request.id
+                                                )
+                                            }
+                                            className="bg-green-500 z-50 cursor-pointer hover:bg-green-600 px-5 py-2.5 rounded-md"
+                                        />
+                                        <button
+                                            onClick={() =>
+                                                mutationDecline.mutate(
+                                                    request.id
+                                                )
+                                            }
+                                            className="capitalize z-50 hover:outline outline-1 px-4 py-2 rounded-md outline-red-500"
+                                        >
+                                            Decline
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </li>
                     )}
                 </>
             ))}
-        </Notification>
+        </NotificationCard>
     )
 }
 

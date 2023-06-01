@@ -5,7 +5,8 @@ const useReusableMutation = (
     mutationKey: string,
     restFunction: (data: any) => Promise<AxiosResponse<any, any> | null>,
     queryClient: QueryClient,
-    queryKey: string[]
+    queryKey: string[],
+    onSuccess?: (data: any, variables: any, queryClient: QueryClient) => void
 ) => {
     const mutation = useMutation(restFunction, {
         mutationKey: mutationKey,
@@ -20,6 +21,7 @@ const useReusableMutation = (
                 newData.id,
             ])
             queryClient.setQueryData([...queryKey, newData.id], newData)
+
             return { previousData, newData }
         },
 
@@ -28,6 +30,12 @@ const useReusableMutation = (
                 [...queryKey, context?.newData.id],
                 context?.previousData
             )
+        },
+
+        onSuccess: (data, variables) => {
+            if (onSuccess) {
+                onSuccess(data, variables, queryClient)
+            }
         },
 
         onSettled: (newData: any) => {

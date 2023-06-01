@@ -61,7 +61,9 @@ const ImageInput: React.FC<ImageInputProps> = ({ onImageChange }) => {
                     className="group-hover:text-primaryBlue"
                     size={24}
                 />
-                <span className=" group-hover:text-primaryBlue">Add Image</span>
+                <span className=" group-hover:text-primaryBlue">
+                    Add Profile Image
+                </span>
             </div>
             {fileName && <p className=" m-auto">{fileName}</p>}
             <Modal

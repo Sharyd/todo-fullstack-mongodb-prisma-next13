@@ -40,32 +40,30 @@ const DeleteProfile = ({ setIsOpen }: DeleteProfileProps) => {
 
     return (
         <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form
+                className="flex flex-col gap-6"
+                onSubmit={handleSubmit(onSubmit)}
+            >
                 <p>
                     If you logged with google or github you can delete your
-                    account by filling the input with bad password and submit
-                    But if you dont u need to add correct password!
+                    account without providing a password
                 </p>
-                <div>
-                    <Input
-                        id="password"
-                        register={register}
-                        label="Password"
-                        type="password"
-                    />
-                    <div className="flex flex-1 items-center justify-around">
-                        <Input id="submit" type="submit" label="Delete" />
-                        <div
-                            onClick={() => setIsOpen(false)}
-                            className="w-full"
-                        >
-                            <Input
-                                id="button"
-                                type="button"
-                                label="Close"
-                                className="border-red-600 hover:bg-red-600 hover:text-white"
-                            />
-                        </div>
+
+                <Input
+                    id="password"
+                    register={register}
+                    label="Password"
+                    type="password"
+                />
+                <div className="flex flex-1 items-center justify-around">
+                    <Input id="submit" type="submit" label="Delete" />
+                    <div onClick={() => setIsOpen(false)} className="w-full">
+                        <Input
+                            id="button"
+                            type="button"
+                            label="Close"
+                            className="border-red-600 hover:bg-red-600 hover:text-white"
+                        />
                     </div>
                 </div>
             </form>

@@ -82,9 +82,6 @@ export async function GET(request: NextRequest, response: NextApiResponse) {
                 },
             ],
         },
-        orderBy: {
-            createdAt: loggedUser ? 'desc' : 'asc',
-        },
     })
 
     if (!todos) return NextResponse.json({ error: 'No todos found' })

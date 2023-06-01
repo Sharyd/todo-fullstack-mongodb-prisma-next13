@@ -8,7 +8,7 @@ import { getSession } from '@/app/sessions/getLoggedUser'
 const prisma = new PrismaClient()
 
 interface UpdateBody {
-    password?: { oldPassword: string; newPassword: string }
+    password?: { oldPassword?: string; newPassword?: string }
     name?: string
     image?: string
 }
@@ -22,7 +22,7 @@ cloudinary.config({
 export async function PATCH(request: NextRequest) {
     const session: any = await getSession()
     const userId = session?.user?.userId
-    console.log(userId)
+
     if (!userId) {
         return NextResponse.json('Not authenticated')
     }
@@ -38,8 +38,8 @@ export async function PATCH(request: NextRequest) {
 
     let updates: { [key: string]: any } = {}
 
-    if (password?.oldPassword && password?.newPassword) {
-        const isCorrectPassword = bcrypt.compare(
+    if (password?.oldPassword) {
+        const isCorrectPassword = await bcrypt.compare(
             password.oldPassword,
             user.hashedPassword
         )
@@ -47,32 +47,54 @@ export async function PATCH(request: NextRequest) {
             return NextResponse.json('Old password does not match')
         }
 
-        const hashedPassword = await bcrypt.hash(password.newPassword, 12)
-        updates.hashedPassword = hashedPassword
-    }
-
-    if (name) {
-        updates.name = name
+        // If the new password is provided, hash it and add to updates.
+        if (password.newPassword) {
+            const hashedPassword = await bcrypt.hash(password.newPassword, 12)
+            updates.hashedPassword = hashedPassword
+        }
+    } else if (password?.newPassword) {
+        // If only the new password is provided without the old one, return an error.
+        return NextResponse.json('Old password must be provided')
     }
 
     let imageUrl: string | undefined
-    if (image) {
-        const path = `${process.cwd()}/${Date.now()}.png`
-        await fs.writeFile(path, image, 'base64')
-        const result = await cloudinary.uploader.upload(path)
-        imageUrl = result.secure_url
-        await fs.unlink(path)
-        updates.image = imageUrl
+    if (name || image) {
+        // If the user hasn't authenticated by providing correct old password, reject the request.
+        if (
+            password?.oldPassword &&
+            !(await bcrypt.compare(password.oldPassword, user.hashedPassword))
+        ) {
+            return NextResponse.json('Old password does not match')
+        }
+
+        if (name) {
+            updates.name = name
+        }
+
+        if (image) {
+            const path = `${process.cwd()}/${Date.now()}.png`
+            await fs.writeFile(path, image, 'base64')
+            const result = await cloudinary.uploader.upload(path)
+            imageUrl = result.secure_url
+            await fs.unlink(path)
+            updates.image = imageUrl
+        }
     }
 
     if (Object.keys(updates).length === 0) {
         return NextResponse.json('No updates provided')
     }
 
-    const updatedUser = await prisma.user.update({
-        where: { id: userId },
-        data: updates,
-    })
+    await prisma.$transaction([
+        prisma.user.update({
+            where: { id: userId },
+            data: updates,
+        }),
+        prisma.todo.updateMany({
+            where: { userId },
+            data: { userName: name },
+        }),
+    ])
 
-    return NextResponse.json(updatedUser)
+    return NextResponse.json('user updated')
 }

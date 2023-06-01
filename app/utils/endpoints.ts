@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { Todo } from './types'
+import { data } from 'autoprefixer'
 
 const API_BASE_URL = 'http://localhost:3000/api'
 
@@ -61,7 +62,10 @@ export const completeTodos = async (
 
 export const deleteTodos = async (todo: Todo): Promise<AxiosResponse<Todo>> => {
     const url = createTodoApiUrl(
-        `todoDelete/${JSON.stringify({ id: todo.id, userId: todo.userId })}`
+        `todo/todoDelete/${JSON.stringify({
+            id: todo.id,
+            userId: todo.userId,
+        })}`
     )
 
     return handleRequest(axios.delete(url))
@@ -76,6 +80,11 @@ export const getUsersWithPermissionsToView = async () => {
     const url = createTodoApiUrl('user/getUsersPermission')
     return handleRequest(axios.get(url))
 }
+export const getUser = async (userId: string) => {
+    const url = createTodoApiUrl('user/getUser' + userId)
+    return handleRequest(axios.get(url))
+}
+
 interface UserUpdates {
     password?: {
         oldPassword: string
@@ -90,7 +99,10 @@ export const editUser = async (updates: UserUpdates) => {
     return handleRequest(axios.patch(url, updates))
 }
 export const deleteProfile = async (password: string) => {
-    const url = createTodoApiUrl(`user/userDelete/${password}`)
+    const url = createTodoApiUrl(
+        // this is for delete profile with github or google
+        `user/userDelete/${password === '' ? 'delete' : password}`
+    )
     return handleRequest(axios.delete(url))
 }
 
@@ -115,15 +127,14 @@ export const getUserPermissionToViewTodos = async () => {
 }
 
 export const acceptPermissionRequest = async (requestId: string) => {
-    console.log('requestId', requestId)
     const url = createTodoApiUrl('user/permissions/acceptPermissionRequest')
     return handleRequest(axios.post(url, { requestId }))
 }
 
-export const declinePermissionRequest = async (
-    requestId: string
-): Promise<any> => {
+export const declinePermissionRequest = async (requestId: string) => {
+    if (!requestId) throw new Error('requestId is undefined or null')
     const url = createTodoApiUrl('user/permissions/declinePermissionRequest')
+    console.log(`Sending request to ${url} with requestId: ${requestId}`)
     return handleRequest(axios.post(url, { requestId }))
 }
 

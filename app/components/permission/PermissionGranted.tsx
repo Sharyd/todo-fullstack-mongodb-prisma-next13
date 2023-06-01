@@ -8,7 +8,6 @@ import Loader from '../ui/Loader'
 
 interface Props {
     notification: NotificationType[] | undefined
-
     deleteNotificationMutation: UseMutationResult<
         AxiosResponse<any, any> | null,
         unknown,

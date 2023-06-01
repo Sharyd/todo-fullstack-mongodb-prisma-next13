@@ -101,7 +101,6 @@ const EditProfile = ({ setIsOpen }: EditProfileProps) => {
                         errors={errors}
                         type="password"
                         placeholderText="Enter Old Password"
-                        required
                     />
                     <Input
                         id="newPassword"
@@ -110,7 +109,6 @@ const EditProfile = ({ setIsOpen }: EditProfileProps) => {
                         errors={errors}
                         type="password"
                         placeholderText="Enter New Password"
-                        required
                     />
                     <div className="flex mt-2 flex-col gap-4 w-full">
                         <ImageInput onImageChange={setImage} />

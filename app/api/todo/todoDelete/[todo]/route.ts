@@ -26,6 +26,7 @@ export async function DELETE(
             { status: 401 }
         )
     }
+
     if (loggedUser.id !== userId) {
         // Fetch the user to check if they have permission to delete the todo
         const user = await prisma.user.findUnique({

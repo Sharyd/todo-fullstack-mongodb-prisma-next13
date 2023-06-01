@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'
+
 export interface Todo {
     createdAt?: string
     updatedAt?: string
@@ -49,6 +51,7 @@ export interface permissionRequestType {
     createdAt?: string | null | undefined
     updatedAt?: string | null | undefined
     status?: string | null | undefined
+    fromUserName?: string | null | undefined
 }
 
 export interface NotificationType {

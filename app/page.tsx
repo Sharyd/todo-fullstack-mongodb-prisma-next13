@@ -33,7 +33,6 @@ import {
 } from './utils/endpoints'
 import { IoIosNotifications } from 'react-icons/io'
 import { useQuery, useQueryClient } from 'react-query'
-import { Notification } from './components/ui/Notification'
 import { AiOutlineClose } from 'react-icons/ai'
 import PermissionNotificationContentToView from './components/permission/PermissionNotificationContentToView'
 import { set } from 'react-hook-form'
@@ -51,7 +50,11 @@ export default function Home() {
         isLoading,
         isFetching,
     } = useQuery<NotificationType[]>('notification', getNotification)
-
+    const { data: permissionRequests, refetch: refetchPermissionRequests } =
+        useQuery<permissionRequestType[]>(
+            'permissionRequests',
+            getUserPermissionToViewTodos
+        )
     const [isFullstackWay, setIsFullstackWay] = useLocalStorage(
         'isFullStackWay',
         false
@@ -66,30 +69,24 @@ export default function Home() {
         isLoading: isLoadingDeleteNotification,
     } = useReusableMutation(
         'deleteNotification',
-        deleteNotification, // This is the function that makes the delete request
+        deleteNotification,
         queryClient,
-        ['notifications']
+        ['notifications'],
+        (data, variables) => {
+            queryClient.setQueryData('notification', (old: any) =>
+                old?.filter(
+                    (notification: { id: string }) =>
+                        notification.id !== variables.id
+                )
+            )
+        }
     )
     const [isOpen, setIsOpen] = useState(false)
-    const [permissionRequests, setPermissionRequests] =
-        useState<permissionRequestType>([])
 
-    const isPending = permissionRequests.some(
+    const isPending = permissionRequests?.some(
         (request) => request.status === status.Pending
     )
 
-    useEffect(() => {
-        if (!user) return
-        getUserPermissionToViewTodos()
-            .then((data) => {
-                setPermissionRequests(data)
-            })
-            .catch((err) => {
-                console.log(err)
-                errorToast(err.message)
-            })
-    }, [user])
-    console.log(isOpenProfile)
     const menuUserButtons = [
         {
             label: 'Logout',
@@ -120,6 +117,7 @@ export default function Home() {
             <>
                 {isPending && (
                     <PermissionNotificationContentToView
+                        refetchPermissionRequests={refetchPermissionRequests}
                         permissionRequests={permissionRequests}
                         declinePermissionRequest={declinePermissionRequest}
                         acceptPermissionRequest={acceptPermissionRequest}
@@ -148,10 +146,10 @@ export default function Home() {
                 </div>
                 <button onClick={() => setIsOpenNotification(true)}>
                     <IoIosNotifications
-                        className={`w-6 h-6 fill-white ${
+                        className={`w-6 h-6  ${
                             notification?.length
-                                ? 'fill-red-500 animate-ringBell'
-                                : ''
+                                ? 'fill-red-500 animate-pulse animate-ringBell'
+                                : 'fill-white'
                         }`}
                     />
                 </button>

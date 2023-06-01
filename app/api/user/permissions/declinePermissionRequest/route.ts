@@ -5,9 +5,8 @@ import getLoggedUser from '@/app/sessions/getLoggedUser'
 const prisma = new PrismaClient()
 
 export async function POST(request: Request) {
-    const body = request.json()
-    const { requestId } = body as any
-
+    const body = await request.json()
+    const { requestId } = body
     // Get the logged-in user
     const loggedUser = await getLoggedUser()
 
@@ -19,11 +18,17 @@ export async function POST(request: Request) {
         )
     }
 
-    // Update the permission request to Declined
-    await prisma.permissionRequest.update({
+    // Decline the permission request
+    await prisma.permissionRequest.delete({
         where: { id: requestId },
-        data: { status: 'Declined' },
     })
+    // or but user dont have a chance send it again from both side better is just delete it
+    // await prisma.permissionRequest.update({
+    //     where: { id: requestId },
+    //     data: { status: 'Accepted' },
+    // })
 
-    return NextResponse.json({ message: 'Permission request declined' })
+    return NextResponse.json({
+        message: 'Permission request declined successfully',
+    })
 }

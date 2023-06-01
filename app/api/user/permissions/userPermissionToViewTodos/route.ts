@@ -26,28 +26,40 @@ export async function POST(request: Request) {
     }
 
     // Check for previous permission requests
-    const existingPermissionRequest = await prisma.permissionRequest.findUnique(
-        {
+    const existingPermissionRequestFromUsers =
+        await prisma.permissionRequest.findUnique({
             where: {
                 fromUserId_toUserId: {
                     fromUserId: loggedUser.id,
                     toUserId: userId,
                 },
             },
-        }
-    )
+        })
 
-    if (existingPermissionRequest) {
+    const existingPermissionRequestToUsers =
+        await prisma.permissionRequest.findUnique({
+            where: {
+                fromUserId_toUserId: {
+                    fromUserId: userId,
+                    toUserId: loggedUser.id,
+                },
+            },
+        })
+
+    if (
+        existingPermissionRequestFromUsers ||
+        existingPermissionRequestToUsers
+    ) {
         return NextResponse.json(
-            { error: 'You already sent a permission request to this user' },
+            { error: 'You already have a relationship with this user' },
             { status: 400 }
         )
     }
-
     // Add the permission request
     await prisma.permissionRequest.create({
         data: {
             fromUserId: loggedUser.id,
+            fromUserName: loggedUser.name,
             toUserId: userId,
         },
     })
@@ -71,7 +83,6 @@ export async function GET(request: NextRequest, response: NextResponse) {
     const permissionRequests = await prisma.permissionRequest.findMany({
         where: { toUserId: loggedUser.id },
     })
-    console.log(permissionRequests)
 
     // Send the permission requests back to the client
     return NextResponse.json(permissionRequests)

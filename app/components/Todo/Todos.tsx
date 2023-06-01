@@ -143,8 +143,8 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
                     </div>
 
                     <p className="text-white ">
-                        If u want too see todos of a specific user, send
-                        permission to the user to see his todos with
+                        If u want too see todos of a specific user, click on the
+                        user plus icon and send a permission to the user
                     </p>
 
                     <CreateTodo

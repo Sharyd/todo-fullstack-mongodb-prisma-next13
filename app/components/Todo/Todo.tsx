@@ -294,7 +294,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
             </div>
             {openPermissionModal && (
                 <Modal
-                    className="w-[400px] md:w-[500px] left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4"
+                    className="w-[400px] md:w-[500px] h-max  left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4"
                     setIsOpen={setOpenPermissionModal}
                     isOpen={openPermissionModal}
                     modalTitle="Add permission"
