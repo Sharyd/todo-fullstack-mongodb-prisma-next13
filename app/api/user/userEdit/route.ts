@@ -30,41 +30,54 @@ export async function PATCH(request: NextRequest) {
     const body: UpdateBody = JSON.parse(await request.text())
     const { password, name, image } = body
 
-    const user: any = await prisma.user.findUnique({ where: { id: userId } })
+    const user: any = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { accounts: true }, // include accounts to check if user has logged in with a provider
+    })
 
     if (!user) {
         return NextResponse.json('User not found')
     }
 
     let updates: { [key: string]: any } = {}
-
-    if (password?.oldPassword) {
-        const isCorrectPassword = await bcrypt.compare(
-            password.oldPassword,
-            user.hashedPassword
-        )
-        if (!isCorrectPassword) {
-            return NextResponse.json('Old password does not match')
-        }
-
-        // If the new password is provided, hash it and add to updates.
-        if (password.newPassword) {
-            const hashedPassword = await bcrypt.hash(password.newPassword, 12)
-            updates.hashedPassword = hashedPassword
-        }
-    } else if (password?.newPassword) {
-        // If only the new password is provided without the old one, return an error.
-        return NextResponse.json('Old password must be provided')
-    }
-
     let imageUrl: string | undefined
-    if (name || image) {
-        // If the user hasn't authenticated by providing correct old password, reject the request.
-        if (
-            password?.oldPassword &&
-            !(await bcrypt.compare(password.oldPassword, user.hashedPassword))
-        ) {
-            return NextResponse.json('Old password does not match')
+
+    // If user has logged in with a provider
+    if (user.accounts.length > 0) {
+        if (name) {
+            updates.name = name
+        }
+        if (image) {
+            const path = `${process.cwd()}/${Date.now()}.png`
+            await fs.writeFile(path, image, 'base64')
+            const result = await cloudinary.uploader.upload(path)
+            imageUrl = result.secure_url
+            await fs.unlink(path)
+            updates.image = imageUrl
+        }
+    }
+    // If user has not logged in with a provider, then password is required for updates
+    else {
+        if (password?.oldPassword) {
+            const isCorrectPassword = await bcrypt.compare(
+                password.oldPassword,
+                user.hashedPassword
+            )
+            if (!isCorrectPassword) {
+                return NextResponse.json('Old password does not match')
+            }
+
+            // If the new password is provided, hash it and add to updates.
+            if (password.newPassword) {
+                const hashedPassword = await bcrypt.hash(
+                    password.newPassword,
+                    12
+                )
+                updates.hashedPassword = hashedPassword
+            }
+        } else if (password?.newPassword) {
+            // If only the new password is provided without the old one, return an error.
+            return NextResponse.json('Old password must be provided')
         }
 
         if (name) {

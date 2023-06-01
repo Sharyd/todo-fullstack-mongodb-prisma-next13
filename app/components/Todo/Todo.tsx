@@ -69,7 +69,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
 
     useEffect(() => {
         handleFocus()
-    }, [isActiveUpdate])
+    }, [isActiveUpdate, handleFocus])
 
     const handleDelete = useCallback(
         async (todo: TodoType) => {
@@ -87,7 +87,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                   })
                 : removeTodo(todo.todoId as string)
         },
-        [todoId, removeTodo]
+        [todoId, removeTodo, deleteTodoMutation, isFullstackWay]
     )
 
     const handleUpdateTodo = () => {
@@ -280,6 +280,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                                 className="block md:hidden cursor-pointer    group-hover:block"
                             >
                                 <img
+                                    alt="delete icon"
                                     className="fill-primaryBlue"
                                     src="images/icon-cross.svg"
                                 />

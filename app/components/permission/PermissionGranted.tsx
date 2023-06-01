@@ -34,7 +34,10 @@ const PermissionGranted = ({
                 ) : (
                     <>
                         {notification?.map((notification) => (
-                            <div className="flex items-center rounded-md p-2 bg-primaryBlue justify-between">
+                            <div
+                                key={notification.id}
+                                className="flex items-center rounded-md p-2 bg-primaryBlue justify-between"
+                            >
                                 <p className="">{notification.message}</p>
                                 <button
                                     onClick={() =>
