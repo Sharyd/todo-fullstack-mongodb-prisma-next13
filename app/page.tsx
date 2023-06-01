@@ -1,7 +1,6 @@
 'use client'
 import Image from 'next/image'
 import GradientImage from './components/GradientImage'
-import Todo from './components/todo/Todos'
 
 import { useEffect, useState } from 'react'
 import useLocalStorage from './hooks/useLocalStorage'
@@ -9,7 +8,7 @@ import useLocalStorage from './hooks/useLocalStorage'
 import { BsChevronRight } from 'react-icons/bs'
 import { motion } from 'framer-motion'
 import { errorToast, successToast } from './utils/toast'
-import Todos from './components/todo/Todos'
+import Todos from './components/Todo/Todos'
 import { HighlightButton } from './components/ui/Button'
 import { signOut, useSession } from 'next-auth/react'
 
