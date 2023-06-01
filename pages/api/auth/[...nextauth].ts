@@ -91,11 +91,17 @@ export const authOptions: AuthOptions = {
                 ...userInfo,
                 userId,
             }
+            const user = await prisma.user.findUnique({
+                where: { id: token.sub },
+                include: { accounts: true },
+            })
 
+            const provider = user?.accounts.map((account) => account.provider)
             return Promise.resolve({
                 ...session,
                 ...token,
                 user: updatedUser,
+                providerName: provider,
             })
         },
     },

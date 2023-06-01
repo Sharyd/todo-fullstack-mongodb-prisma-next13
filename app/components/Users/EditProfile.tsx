@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import ImageInput from '../ui/ImageInput'
 import { editUser } from '../../utils/endpoints'
 import { useSession, signIn } from 'next-auth/react'
+import Loader from '../ui/Loader'
 
 interface EditProfileProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -19,7 +20,7 @@ interface FormValues {
 }
 
 const EditProfile = ({ setIsOpen }: EditProfileProps) => {
-    const { data: session, status } = useSession()
+    const { data: session, status } = useSession() as any
     const [isLoading, setIsLoading] = useState(false)
     const [image, setImage] = useState<string | null>(null)
 
@@ -92,37 +93,51 @@ const EditProfile = ({ setIsOpen }: EditProfileProps) => {
                         errors={errors}
                         value={session?.user?.name}
                     />
-                    <Input
-                        id="oldPassword"
-                        register={register}
-                        label="Old Password *"
-                        errors={errors}
-                        type="password"
-                        placeholderText="Enter Old Password"
-                    />
-                    <Input
-                        id="newPassword"
-                        register={register}
-                        label="New Password *"
-                        errors={errors}
-                        type="password"
-                        placeholderText="Enter New Password"
-                    />
+                    {session?.providerName.length === 0 && (
+                        <>
+                            <Input
+                                id="oldPassword"
+                                register={register}
+                                label="Old Password *"
+                                errors={errors}
+                                type="password"
+                                placeholderText="Enter Old Password"
+                            />
+                            <Input
+                                id="newPassword"
+                                register={register}
+                                label="New Password *"
+                                errors={errors}
+                                type="password"
+                                placeholderText="Enter New Password"
+                            />
+                        </>
+                    )}
                     <div className="flex mt-2 flex-col gap-4 w-full">
                         <ImageInput onImageChange={setImage} />
                         <div className="flex flex-1 items-center justify-around">
-                            <Input id="submit" type="submit" label="Update" />
-                            <div
-                                onClick={() => setIsOpen(false)}
-                                className="w-full"
-                            >
-                                <Input
-                                    id="button"
-                                    type="button"
-                                    label="Close"
-                                    className="border-red-600 hover:bg-red-600 hover:text-white"
-                                />
-                            </div>
+                            {isLoading ? (
+                                <Loader size={30} />
+                            ) : (
+                                <>
+                                    <Input
+                                        id="submit"
+                                        type="submit"
+                                        label="Update"
+                                    />
+                                    <div
+                                        onClick={() => setIsOpen(false)}
+                                        className="w-full"
+                                    >
+                                        <Input
+                                            id="button"
+                                            type="button"
+                                            label="Close"
+                                            className="border-red-600 hover:bg-red-600 hover:text-white"
+                                        />
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

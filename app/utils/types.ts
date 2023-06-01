@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import Providers from '../components/auth/Providers'
 
 export interface Todo {
     createdAt?: string

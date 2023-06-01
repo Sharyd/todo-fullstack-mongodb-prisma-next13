@@ -14,7 +14,7 @@ import { AiOutlinePlus, AiOutlineUserAdd } from 'react-icons/ai'
 import useTodosMutation from '@/app/hooks/useTodosMutation'
 import { errorToast, successToast } from '@/app/utils/toast'
 import { Modal } from '../ui/modals/Modal'
-import AddPermission from '../Permission/AddPermission'
+import AddPermission from '../permission/AddPermission'
 
 interface Props {
     isFullstackWay: boolean

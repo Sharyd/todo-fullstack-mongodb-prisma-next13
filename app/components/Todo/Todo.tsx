@@ -24,7 +24,7 @@ import { AiOutlineUserAdd } from 'react-icons/ai'
 
 import { Modal } from '../ui/modals/Modal'
 
-import AddPermission from '../Permission/AddPermission'
+import AddPermission from '../permission/AddPermission'
 
 export interface DragItem {
     index: number

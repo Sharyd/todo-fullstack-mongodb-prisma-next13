@@ -31,11 +31,11 @@ import {
 } from './utils/endpoints'
 import { IoIosNotifications } from 'react-icons/io'
 import { useQuery, useQueryClient } from 'react-query'
-import PermissionNotificationContentToView from './components/Permission/PermissionNotificationContentToView'
+import PermissionNotificationContentToView from './components/permission/PermissionNotificationContentToView'
 import useReusableMutation from './hooks/useReusableMutation'
-import PermissionGranted from './components/Permission/PermissionGranted'
-import EditProfile from './components/Users/EditProfile'
-import DeleteProfile from './components/Users/DeleteProfile'
+import PermissionGranted from './components/permission/PermissionGranted'
+import EditProfile from './components/users/EditProfile'
+import DeleteProfile from './components/users/DeleteProfile'
 
 export default function Home() {
     const { data: session } = useSession()
