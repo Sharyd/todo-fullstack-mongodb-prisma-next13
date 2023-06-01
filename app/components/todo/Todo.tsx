@@ -12,24 +12,19 @@ import {
 import axios from 'axios'
 import { Todo as TodoType, loggedUserType } from '@/app/utils/types'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-
 import useTodoMutation from '@/app/hooks/useTodoMutation'
 import { errorToast, successToast } from '@/app/utils/toast'
-
 import Loader from '../ui/Loader'
 import { IoMdClose } from 'react-icons/io'
 import type { Identifier, XYCoord } from 'dnd-core'
 import { DropTargetMonitor, useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from '@/app/utils/types'
-import { handleTodoErrorMessage } from '@/app/utils/helpers'
 import { useSession } from 'next-auth/react'
 import { AiOutlineUserAdd } from 'react-icons/ai'
 
 import { Modal } from '../ui/modals/Modal'
-import { get } from 'http'
-import AddPermissionActions from '../permission/AddPermission'
-import AddPermission from '../permission/AddPermission'
-import { HighlightButton } from '../ui/Button'
+
+import AddPermission from '../Permission/AddPermission'
 
 export interface DragItem {
     index: number

@@ -12,12 +12,9 @@ import { Todo } from '@/app/utils/types'
 import { v4 as uuidv4 } from 'uuid'
 import { AiOutlinePlus, AiOutlineUserAdd } from 'react-icons/ai'
 import useTodosMutation from '@/app/hooks/useTodosMutation'
-import toast from 'react-hot-toast'
 import { errorToast, successToast } from '@/app/utils/toast'
-import { error } from 'console'
 import { Modal } from '../ui/modals/Modal'
-import AddPermission from '../permission/AddPermission'
-import { HighlightButton } from '../ui/Button'
+import AddPermission from '../Permission/AddPermission'
 
 interface Props {
     isFullstackWay: boolean
