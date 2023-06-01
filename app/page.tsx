@@ -3,17 +3,16 @@ import Image from 'next/image'
 import GradientImage from './components/GradientImage'
 import Todo from './components/todo/Todos'
 
-import { MouseEvent, Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useLocalStorage from './hooks/useLocalStorage'
 
-import { BsChevronRight, BsChevronLeft } from 'react-icons/bs'
+import { BsChevronRight } from 'react-icons/bs'
 import { motion } from 'framer-motion'
 import { errorToast, successToast } from './utils/toast'
 import Todos from './components/todo/Todos'
-import { MdLogout } from 'react-icons/md'
 import { HighlightButton } from './components/ui/Button'
 import { signOut, useSession } from 'next-auth/react'
-import SelectUser from './components/users/SelectUser'
+
 import {
     NotificationType,
     loggedUserType,
@@ -33,9 +32,7 @@ import {
 } from './utils/endpoints'
 import { IoIosNotifications } from 'react-icons/io'
 import { useQuery, useQueryClient } from 'react-query'
-import { AiOutlineClose } from 'react-icons/ai'
 import PermissionNotificationContentToView from './components/permission/PermissionNotificationContentToView'
-import { set } from 'react-hook-form'
 import useReusableMutation from './hooks/useReusableMutation'
 import PermissionGranted from './components/permission/PermissionGranted'
 import EditProfile from './components/users/EditProfile'

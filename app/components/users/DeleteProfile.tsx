@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { useSession, signOut } from 'next-auth/react'
-import axios from 'axios'
 import Input from '../ui/Input'
 import { deleteProfile } from '@/app/utils/endpoints'
 import { errorToast, successToast } from '@/app/utils/toast'

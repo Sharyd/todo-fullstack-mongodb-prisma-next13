@@ -3,10 +3,6 @@ import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai'
 import { BsChevronExpand } from 'react-icons/bs'
-import { useQuery } from 'react-query'
-import { get } from 'http'
-
-import { PuffLoader } from 'react-spinners'
 import Loader from '../ui/Loader'
 import { userType } from '@/app/utils/types'
 

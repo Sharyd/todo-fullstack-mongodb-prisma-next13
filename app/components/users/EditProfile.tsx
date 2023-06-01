@@ -1,14 +1,12 @@
 'use client'
-
-import axios from 'axios'
 import React, { useState } from 'react'
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { errorToast, successToast } from '../../utils/toast'
 import Input from '../ui/Input'
 import { useRouter } from 'next/navigation'
 import ImageInput from '../ui/ImageInput'
 import { editUser } from '../../utils/endpoints'
-import { useSession, getSession, signIn } from 'next-auth/react'
+import { useSession, signIn } from 'next-auth/react'
 
 interface EditProfileProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>

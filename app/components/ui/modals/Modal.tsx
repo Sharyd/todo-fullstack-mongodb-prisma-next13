@@ -1,6 +1,6 @@
 'use client'
-import { Fragment, useContext, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
+import { useContext } from 'react'
+import { Dialog } from '@headlessui/react'
 import { ThemeContext } from '../../../store/themeContext'
 import { AnimatePresence, TargetAndTransition, motion } from 'framer-motion'
 

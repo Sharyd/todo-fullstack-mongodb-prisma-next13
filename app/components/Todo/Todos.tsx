@@ -1,6 +1,6 @@
 'use client'
 import update from 'immutability-helper'
-import React, { Suspense, use, useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Container from '../Container'
 import Heading from '../ui/Heading'
 import ThemeToggler from '../theme/ThemeToggler'
@@ -10,28 +10,16 @@ import Card from '../ui/Card'
 import Actions from './Actions'
 import { useTodoContext } from '@/app/store/todoContextProvider'
 import ActionsMobile from './ActionsMobile'
-import {
-    getTodos,
-    getUsers,
-    getUsersWithPermissionsToView,
-    updateDragTodos,
-    updateTodos,
-} from '@/app/utils/endpoints'
+import { getTodos, updateDragTodos } from '@/app/utils/endpoints'
 
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Todo as TodoType, userType } from '../../utils/types'
 import Loader from '../ui/Loader'
-import { PuffLoader } from 'react-spinners'
 import {
     activeTodos,
     isAllTodosCompleted,
     validateFilters,
 } from '@/app/utils/helpers'
-import SelectUser from '../users/SelectUser'
-import { HighlightButton } from '../ui/Button'
-import { BsChevronRight } from 'react-icons/bs'
-import { HiUserAdd } from 'react-icons/hi'
-import { AiOutlineUserAdd } from 'react-icons/ai'
 
 interface Props {
     isFullstackWay: boolean
@@ -42,11 +30,6 @@ const Todos = ({ isFullstackWay, setIsFullstackWay }: Props) => {
     const { todos, filter, setTodos } = useTodoContext()
     const [dbFilters, setDbFilters] = useState('all')
     const [selected, setSelected] = useState<userType>({ name: 'Select User' })
-    const {
-        data: usersWithPermissions,
-        isLoading: isLoadingUsers,
-        isError,
-    } = useQuery('getPermissionUsers', getUsersWithPermissionsToView)
 
     const {
         data: dbtodos,

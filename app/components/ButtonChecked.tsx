@@ -7,10 +7,6 @@ import { Todo } from '../utils/types'
 import Loader from './ui/Loader'
 import { AxiosResponse } from 'axios'
 import { errorToast, successToast } from '../utils/toast'
-import { IoMdClose } from 'react-icons/io'
-import useTodosMutation from '../hooks/useTodosMutation'
-import { get } from 'http'
-import getLoggedUser from '../sessions/getLoggedUser'
 
 interface Props {
     todoId?: string | undefined
