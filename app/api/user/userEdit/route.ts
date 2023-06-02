@@ -22,6 +22,7 @@ cloudinary.config({
 export async function PATCH(request: NextRequest) {
     const session: any = await getSession()
     const userId = session?.user?.userId
+    const isProviderLogin = session?.user?.provider
 
     if (!userId) {
         return NextResponse.json('Not authenticated')
@@ -32,7 +33,7 @@ export async function PATCH(request: NextRequest) {
 
     const user: any = await prisma.user.findUnique({
         where: { id: userId },
-        include: { accounts: true }, // include accounts to check if user has logged in with a provider
+        include: { accounts: true },
     })
 
     if (!user) {
@@ -42,8 +43,8 @@ export async function PATCH(request: NextRequest) {
     let updates: { [key: string]: any } = {}
     let imageUrl: string | undefined
 
-    // If user has logged in with a provider
-    if (user.accounts.length > 0) {
+    // If user has logged in with a provider or the user session indicates a provider login
+    if (session?.providerName?.length > 0) {
         if (name) {
             updates.name = name
         }

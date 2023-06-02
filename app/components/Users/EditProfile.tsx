@@ -6,9 +6,14 @@ import Input from '../ui/Input'
 import { useRouter } from 'next/navigation'
 import ImageInput from '../ui/ImageInput'
 import { editUser } from '../../utils/endpoints'
-import { useSession, signIn } from 'next-auth/react'
+import {
+    useSession,
+    signIn,
+    signOut,
+    getSession,
+    SignOutResponse,
+} from 'next-auth/react'
 import Loader from '../ui/Loader'
-
 interface EditProfileProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -49,18 +54,23 @@ const EditProfile = ({ setIsOpen }: EditProfileProps) => {
             successToast('Profile updated successfully')
             reset()
 
-            // Here we're signing the user in again with their new credentials to refresh their session
-            const { error } = (await signIn('credentials', {
-                redirect: false,
-                email: session?.user?.email,
-                password: data.newPassword,
-            })) as any
+            // Only sign the user in again with their new credentials if they've updated their password
+            if (data.newPassword && session?.providerName?.length === 0) {
+                const { error } = (await signIn('credentials', {
+                    redirect: false,
+                    email: session?.user?.email,
+                    password: data.newPassword,
+                })) as any
 
-            if (error) {
-                throw new Error(error)
+                if (error) {
+                    throw new Error(error)
+                }
+                router.push('/')
             }
 
-            router.push('/')
+            if (session?.providerName?.length > 0) {
+                await signOut({ redirect: true })
+            }
         } catch (error: any) {
             errorToast(error.message || 'An error occurred')
         } finally {
@@ -73,15 +83,23 @@ const EditProfile = ({ setIsOpen }: EditProfileProps) => {
             <form className="relative" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col text-center gap-3 px-5">
                     <h2 className="text-center text-xl">Edit Your Profile</h2>
-                    <p>
-                        Please note that editing your name and image are
-                        optional. However, if you wish to update either just
-                        your name or image, you will also need to provide your
-                        passwords(like old and new one you can write the old
-                        password to both fields). This is a security measure
-                        designed to confirm your identity and protect your
-                        account
-                    </p>
+                    {session.providerName.length === 0 ? (
+                        <p>
+                            Please note that editing your name and image are
+                            optional. However, if you wish to update either just
+                            your name or image, you will also need to provide
+                            your passwords(like old and new one you can write
+                            the old password to both fields). This is a security
+                            measure designed to confirm your identity and
+                            protect your account
+                        </p>
+                    ) : (
+                        <p>
+                            Update your name and image to make your profile more
+                            attractive. <br /> Please note that you will be
+                            logged out after
+                        </p>
+                    )}
                 </div>
                 <div className="flex flex-col items-start w-full p-5">
                     <Input
