@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { Todo } from './types'
-import { data } from 'autoprefixer'
+import { Comment } from './types'
 
 const API_BASE_URL = 'http://localhost:3000/api'
 
@@ -147,4 +147,26 @@ export const getNotification = async () => {
 export const deleteNotification = async (id: string) => {
     const url = createTodoApiUrl(`notification/${id}`)
     return handleRequest(axios.delete(url))
+}
+
+// Comments
+export const getComments = async (id: string) => {
+    const url = createTodoApiUrl(`todo/comments/getComments/${id}`) // Adjust according to your route
+    return handleRequest(axios.get(url))
+}
+
+export const sendComment = async (comment: Comment, id: string) => {
+    if (!comment) return null
+    const url = createTodoApiUrl(`todo/comments/addComment/${id}`)
+    return handleRequest(axios.post(url, comment))
+}
+
+export const deleteComment = async (id: string) => {
+    const url = createTodoApiUrl(`todo/comments/deleteComment/${id}`)
+    return handleRequest(axios.delete(url))
+}
+
+export const updateComment = async (comment: Comment) => {
+    const url = createTodoApiUrl(`todo/comments/updateComment/${comment.id}`)
+    return handleRequest(axios.put(url, comment))
 }

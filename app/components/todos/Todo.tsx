@@ -4,6 +4,7 @@ import ButtonChecked from '../ButtonChecked'
 import { useTodoContext } from '@/app/store/todoContextProvider'
 
 import { HiOutlinePencilAlt, HiCheck } from 'react-icons/hi'
+import { BiComment } from 'react-icons/bi'
 import {
     addUserPermissionActions,
     deleteTodos,
@@ -21,10 +22,11 @@ import { DropTargetMonitor, useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from '@/app/utils/types'
 import { useSession } from 'next-auth/react'
 import { AiOutlineUserAdd } from 'react-icons/ai'
-
+import Comment from '../comments/Comment'
 import { Modal } from '../ui/modals/Modal'
 
 import AddPermission from '../permission/AddPermission'
+import { useComments } from '@/app/hooks/useComments'
 
 export interface DragItem {
     index: number
@@ -48,8 +50,10 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
     const [newTitle, setNewTitle] = useState('')
     const { todoId, title, completed, id, userId } = todo
     const queryClient = useQueryClient()
+    const { comments, isLoading } = useComments(todo.id as string)
 
     const [openPermissionModal, setOpenPermissionModal] = useState(false)
+    const [openComments, setOpenComments] = useState(false)
 
     const user = session?.user as loggedUserType | undefined
 
@@ -180,7 +184,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
     const opacity = isDragging ? 0 : 1
 
     drag(drop(ref))
-
+    console.log(comments)
     if (!user) return null
 
     return (
@@ -236,6 +240,15 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                         </div>
 
                         <div className="flex gap-4 items-center">
+                            {isFullstackWay && (
+                                <button
+                                    onClick={() => setOpenComments(true)}
+                                    className="text-primaryBlue block md:hidden  h-5 w-5 group-hover:block"
+                                >
+                                    <BiComment className="w-5 h-5 object-cover" />
+                                </button>
+                            )}
+
                             {userId === user.userId && (
                                 <button
                                     onClick={() => setOpenPermissionModal(true)}
@@ -312,6 +325,28 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                         addPermission={addUserPermissionActions}
                         setIsOpen={setOpenPermissionModal}
                     />
+                </Modal>
+            )}
+            {openComments && (
+                <Modal
+                    className="w-[400px] md:w-[700px] h-max  left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4"
+                    setIsOpen={setOpenComments}
+                    isOpen={openComments}
+                    modalTitle="Comments"
+                    initial={{
+                        y: '-100%',
+                        opacity: 1,
+                    }}
+                    animate={{
+                        y: 0,
+                        opacity: 1,
+                    }}
+                    exit={{
+                        y: '-100%',
+                        opacity: 0,
+                    }}
+                >
+                    <Comment comments={comments} id={todo.id} />
                 </Modal>
             )}
         </>

@@ -27,6 +27,18 @@ export interface userType {
     updatedAt?: string | null | undefined
 }
 
+export interface Comment {
+    map(arg0: (comment: any) => JSX.Element): ReactNode
+    id: string
+    content: string
+    createdAt: string
+    updatedAt: string
+    userId: string
+    parentCommentId: string | null
+    replies?: Comment[]
+    user?: userType
+}
+
 export interface loggedUserType {
     name?: string | null | undefined
     email?: string | null | undefined

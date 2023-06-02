@@ -5,10 +5,10 @@ import GradientImage from './components/GradientImage'
 import { useEffect, useState } from 'react'
 import useLocalStorage from './hooks/useLocalStorage'
 
-import { BsChevronRight } from 'react-icons/bs'
+import { BsChevronRight, BsChevronUp, BsChevronDown } from 'react-icons/bs'
 import { motion } from 'framer-motion'
 import { errorToast, successToast } from './utils/toast'
-import Todos from './components/Todo/Todos'
+import Todos from './components/todos/Todos'
 import { HighlightButton } from './components/ui/Button'
 import { signOut, useSession } from 'next-auth/react'
 
@@ -58,6 +58,8 @@ export default function Home() {
     const [isOpenNotification, setIsOpenNotification] = useState(false)
     const [isOpenProfile, setIsOpenProfile] = useState(false)
     const [isDeleteProfile, setIsDeleteProfile] = useState(false)
+
+    const [isOpenViewNotification, setIsOpenViewNotification] = useState(true)
 
     const queryClient = useQueryClient()
     const {
@@ -110,16 +112,44 @@ export default function Home() {
     }, [isFullstackWay])
     return (
         <div className="relative">
-            <>
-                {isPending && (
-                    <PermissionNotificationContentToView
-                        refetchPermissionRequests={refetchPermissionRequests}
-                        permissionRequests={permissionRequests}
-                        declinePermissionRequest={declinePermissionRequest}
-                        acceptPermissionRequest={acceptPermissionRequest}
+            {isPending && (
+                <div className="relative">
+                    <motion.div
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{
+                            opacity: !isOpenViewNotification ? 0 : 1,
+                            y: !isOpenViewNotification ? -100 : 0,
+                        }}
+                        transition={{ duration: 0.5 }}
+                        exit={{ opacity: 0, y: -100 }}
+                        className="flex flex-col absolute left-0 gap-4  w-full"
+                    >
+                        <PermissionNotificationContentToView
+                            refetchPermissionRequests={
+                                refetchPermissionRequests
+                            }
+                            permissionRequests={permissionRequests}
+                            declinePermissionRequest={declinePermissionRequest}
+                            acceptPermissionRequest={acceptPermissionRequest}
+                        />
+                    </motion.div>
+
+                    <HighlightButton
+                        onClick={() =>
+                            setIsOpenViewNotification((prev) => !prev)
+                        }
+                        type="button"
+                        label={
+                            isOpenViewNotification ? (
+                                <BsChevronUp />
+                            ) : (
+                                <BsChevronDown />
+                            )
+                        }
+                        className="absolute transition-all bg-primaryBlue right-0 z-50 w-max  p-4"
                     />
-                )}
-            </>
+                </div>
+            )}
 
             <div className="cursor-pointer gap-3 z-50 absolute right-6 top-6 md:right-20 md:top-16">
                 <div>

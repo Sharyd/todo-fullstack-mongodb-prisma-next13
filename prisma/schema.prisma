@@ -21,7 +21,7 @@ model User {
   accounts        Account[]
   todos           Todo[]
   notifications    Notification[]
-
+comments Comment[]  
   sentPermissionRequests    PermissionRequest[] @relation("PermissionRequestsFrom")
   receivedPermissionRequests PermissionRequest[] @relation("PermissionRequestsTo")
 }
@@ -50,6 +50,7 @@ model Todo {
   userName        String?
   order           Int?
  
+  comments Comment[]
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -91,4 +92,18 @@ model PermissionRequest {
   toUser          User     @relation("PermissionRequestsTo", fields: [toUserId], references: [id], onDelete: Cascade)
 
   @@unique([fromUserId, toUserId])
+}
+
+model Comment {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String @db.ObjectId
+  todoId    String @db.ObjectId
+  parentId  String? @db.ObjectId
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todo      Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  parent    Comment? @relation("CommentToComment", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[] @relation("CommentToComment")
 }

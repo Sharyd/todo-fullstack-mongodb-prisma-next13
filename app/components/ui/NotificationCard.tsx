@@ -6,7 +6,7 @@ interface Props {
 
 export const NotificationCard = ({ children }: Props) => {
     return (
-        <div className="w-full flex-col flex z-50 items-center justify-center h-max hover:animate-none bg-mainBackground ">
+        <div className="w-full  flex-col absolute flex z-50 items-center justify-center h-max hover:animate-none bg-mainBackground ">
             {children}
         </div>
     )

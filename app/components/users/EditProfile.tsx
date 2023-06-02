@@ -6,13 +6,7 @@ import Input from '../ui/Input'
 import { useRouter } from 'next/navigation'
 import ImageInput from '../ui/ImageInput'
 import { editUser } from '../../utils/endpoints'
-import {
-    useSession,
-    signIn,
-    signOut,
-    getSession,
-    SignOutResponse,
-} from 'next-auth/react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 import Loader from '../ui/Loader'
 interface EditProfileProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -68,6 +62,7 @@ const EditProfile = ({ setIsOpen }: EditProfileProps) => {
                 router.push('/')
             }
 
+            // if the user has signed in with a provider and they've updated profile, sign them out
             if (session?.providerName?.length > 0) {
                 await signOut({ redirect: true })
             }

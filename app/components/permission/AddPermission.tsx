@@ -1,6 +1,5 @@
 'use client'
 import React, { useState } from 'react'
-import { Modal } from '../ui/modals/Modal'
 import SelectUser from '../users/SelectUser'
 import { userType } from '@/app/utils/types'
 import { HighlightButton } from '../ui/Button'
