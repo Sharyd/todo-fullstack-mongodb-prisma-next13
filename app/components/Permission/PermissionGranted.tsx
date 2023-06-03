@@ -2,7 +2,7 @@ import { NotificationType } from '@/app/utils/types'
 import { AxiosResponse } from 'axios'
 import React from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
-import { UseMutationResult } from 'react-query'
+import { UseMutationResult, useQueryClient } from 'react-query'
 import { PuffLoader } from 'react-spinners'
 import Loader from '../ui/Loader'
 
@@ -20,8 +20,14 @@ const PermissionGranted = ({
     notification,
     deleteNotificationMutation,
 }: Props) => {
+    const queryClient = useQueryClient()
+
     const handleDelete = (notificationId: string) => {
-        deleteNotificationMutation.mutate(notificationId)
+        deleteNotificationMutation.mutate(notificationId, {
+            onSuccess: () => {
+                queryClient.invalidateQueries('notification')
+            },
+        })
     }
 
     return (
@@ -39,14 +45,15 @@ const PermissionGranted = ({
                                 className="flex items-center rounded-md p-2 bg-primaryBlue justify-between"
                             >
                                 <p className="">{notification.message}</p>
-                                <button
-                                    onClick={() =>
-                                        handleDelete(notification?.id ?? '')
-                                    }
-                                >
-                                    <AiOutlineClose className="w-5 h-5" />
-                                </button>
-                                {deleteNotificationMutation.isLoading && (
+                                {!deleteNotificationMutation.isLoading ? (
+                                    <button
+                                        onClick={() =>
+                                            handleDelete(notification?.id ?? '')
+                                        }
+                                    >
+                                        <AiOutlineClose className="w-5 h-5" />
+                                    </button>
+                                ) : (
                                     <Loader size={25} />
                                 )}
                             </div>

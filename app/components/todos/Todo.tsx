@@ -329,10 +329,10 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
             )}
             {openComments && (
                 <Modal
-                    className="w-[400px] md:w-[700px] h-max  left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4"
+                    className="w-[400px] sm:w-[750px] md:w-[800px] lg:w-[900px] h-max  sm:h-max left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4"
                     setIsOpen={setOpenComments}
                     isOpen={openComments}
-                    modalTitle="Comments"
+                    modalTitle="Nested Comments"
                     initial={{
                         y: '-100%',
                         opacity: 1,
@@ -346,7 +346,19 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                         opacity: 0,
                     }}
                 >
-                    <Comment comments={comments} id={todo.id} />
+                    <>
+                        <button
+                            onClick={() => setOpenComments(false)}
+                            className="absolute right-5"
+                        >
+                            <img
+                                alt="delete icon"
+                                className="fill-primaryBlue w-5 h-5"
+                                src="images/icon-cross.svg"
+                            />
+                        </button>
+                        <Comment comments={comments} id={todo.id} />
+                    </>
                 </Modal>
             )}
         </>

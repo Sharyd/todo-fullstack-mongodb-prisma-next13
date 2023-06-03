@@ -33,7 +33,7 @@ const AddPermission = ({ setIsOpen, text, addPermission }: Props) => {
 
         setIsLoadingAddPermission(false)
     }
-    console.log(isFetching)
+
     return (
         <div className="p-2 flex flex-col relative gap-6">
             <div className="flex flex-col gap-8">
