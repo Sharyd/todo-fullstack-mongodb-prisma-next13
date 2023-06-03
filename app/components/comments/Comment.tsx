@@ -137,7 +137,7 @@ const Comment: React.FC<CommentProps> = ({ comments, parentId = null, id }) => {
             {!parentId && renderCommentForm()}
             <div className="overflow-y-auto max-h-[500px] p-2">
                 {comments?.map((comment: CommentType) => (
-                    <div className="w-full flex flex-col">
+                    <div key={comment.id} className="w-full flex flex-col">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-4 flex-1">
                             <div className="flex w-12 items-center flex-col-reverse gap-1 items-start">
                                 <img
@@ -152,10 +152,7 @@ const Comment: React.FC<CommentProps> = ({ comments, parentId = null, id }) => {
                                     {comment.user?.name}
                                 </p>
                             </div>
-                            <div
-                                key={comment.id}
-                                className="my-2 bg-gray-200 p-2 px-4 rounded w-full"
-                            >
+                            <div className="my-2 bg-gray-200 p-2 px-4 rounded w-full">
                                 <div className="flex justify-between items-center">
                                     <div className="flex flex-col flex-wrap gap-2 w-full">
                                         <p className="text-black">
