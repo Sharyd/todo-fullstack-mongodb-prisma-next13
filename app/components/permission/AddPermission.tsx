@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import SelectUser from '../users/SelectUser'
+import SelectUser from '../users/SelectUsers'
 import { userType } from '@/app/utils/types'
 import { HighlightButton } from '../ui/Button'
 import { errorToast, successToast } from '@/app/utils/toast'
