@@ -34,8 +34,8 @@ import { useQuery, useQueryClient } from 'react-query'
 import PermissionNotificationContentToView from './components/permission/PermissionNotificationContentToView'
 import useReusableMutation from './hooks/useReusableMutation'
 import PermissionGranted from './components/permission/PermissionGranted'
-import EditProfile from './components/users/EditProfile'
-import DeleteProfile from './components/users/DeleteProfile'
+import EditProfile from './components/users/EditUserProfile'
+import DeleteProfile from './components/users/DeleteUserProfile'
 
 export default function Home() {
     const { data: session } = useSession()

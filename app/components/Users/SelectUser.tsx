@@ -4,7 +4,6 @@ import { Listbox, Transition } from '@headlessui/react'
 import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai'
 import { BsChevronExpand } from 'react-icons/bs'
 import Loader from '../ui/Loader'
-
 import { userType } from '@/app/utils/types'
 
 interface Props {
