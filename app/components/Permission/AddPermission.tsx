@@ -2,9 +2,7 @@
 import React, { useState } from 'react'
 import SelectUser from '../users/SelectUser'
 import { userType } from '@/app/utils/types'
-
 import { HighlightButton } from '../ui/Button'
-
 import { errorToast, successToast } from '@/app/utils/toast'
 import { getUsers } from '@/app/utils/endpoints'
 import { useQuery } from 'react-query'

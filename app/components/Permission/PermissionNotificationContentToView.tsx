@@ -2,7 +2,6 @@ import { permissionRequestType } from '@/app/utils/types'
 import React, { useEffect, useState } from 'react'
 import { HighlightButton } from '../ui/Button'
 import { status } from '@/app/utils/types'
-
 import { NotificationCard } from '../ui/NotificationCard'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import Loader from '../ui/Loader'
