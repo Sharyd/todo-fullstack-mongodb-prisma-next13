@@ -1,9 +1,7 @@
 'use client'
 
-import useTodosMutation from '@/app/hooks/useTodosMutation'
 import { useTodoContext } from '@/app/store/todoContextProvider'
 import { deleteCompletedTodos } from '@/app/utils/endpoints'
-import { isAllTodosCompleted } from '@/app/utils/helpers'
 import { errorToast, successToast } from '@/app/utils/toast'
 import React from 'react'
 import { useMutation, useQueryClient } from 'react-query'

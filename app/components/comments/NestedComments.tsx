@@ -15,7 +15,7 @@ const NestedComments: React.FC<NestedCommentsProps> = ({ comment, id }) => {
                 {comment.replies.map((reply: CommentType) => (
                     <Comment
                         key={reply.id}
-                        id={id}
+                        todoId={id}
                         parentId={reply.id}
                         comments={[reply]}
                     />

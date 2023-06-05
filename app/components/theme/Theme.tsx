@@ -1,7 +1,6 @@
 'use client'
 import React, { useContext } from 'react'
 import { ThemeContext } from '../../store/themeContext'
-
 interface Props {
     children: React.ReactNode
 }

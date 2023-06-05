@@ -7,6 +7,7 @@ import { HighlightButton } from '../ui/Button'
 import { errorToast, successToast } from '@/app/utils/toast'
 import { getUsers } from '@/app/utils/endpoints'
 import { useQuery } from 'react-query'
+
 import Loader from '../ui/Loader'
 
 interface Props {
