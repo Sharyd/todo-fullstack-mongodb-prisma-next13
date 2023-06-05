@@ -43,6 +43,12 @@ export interface Comment {
     parentCommentId: string | null
     replies?: Comment[]
     user?: userType
+    likes?: likeType[]
+}
+export interface likeType {
+    id: string
+    userId: string
+    commentId: string
 }
 
 export interface loggedUserType {

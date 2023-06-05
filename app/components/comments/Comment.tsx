@@ -4,17 +4,24 @@ import Loader from '../ui/Loader'
 import { useAddComment, useDeleteComment } from '../../hooks/useComments'
 import { Comment as CommentType, newCommentType } from '@/app/utils/types'
 import { errorToast, successToast } from '@/app/utils/toast'
-import { HighlightButton } from '../ui/Button'
 import { AiOutlineLike, AiOutlineDislike } from 'react-icons/ai'
 import { FaRegComment, FaRegTrashAlt } from 'react-icons/fa'
 import { BiComment } from 'react-icons/bi'
+import NestedComments from './NestedComments'
+import CommentForm from './CommentForm'
+import { useLikes } from '@/app/hooks/useLikes'
+
 interface CommentProps {
-    id: string
+    todoId: string
     parentId?: string | null
     comments: CommentType[] | undefined
 }
 
-const Comment: React.FC<CommentProps> = ({ comments, parentId = null, id }) => {
+const Comment: React.FC<CommentProps> = ({
+    comments,
+    parentId = null,
+    todoId,
+}) => {
     const [commentText, setCommentText] = useState<{ [key: string]: string }>(
         {}
     )
@@ -22,7 +29,8 @@ const Comment: React.FC<CommentProps> = ({ comments, parentId = null, id }) => {
     const [replyIds, setReplyIds] = useState<Set<string>>(new Set())
     const commentRefs = useRef(new Map()).current
 
-    const addCommentMutation = useAddComment(id)
+    const { toggleLikeMutation } = useLikes(todoId)
+    const addCommentMutation = useAddComment(todoId)
     const deleteCommentMutation = useDeleteComment()
 
     const handleAddComment = (parentId?: string) => {
@@ -74,67 +82,21 @@ const Comment: React.FC<CommentProps> = ({ comments, parentId = null, id }) => {
         setReplyIds((prev) => new Set(prev).add(commentId))
     }
 
-    const renderNestedComments = (comment: CommentType) => {
-        if (comment.replies && comment.replies.length > 0) {
-            return (
-                <div className="border-l border-t p-2 rounded-md border-primaryBlue ml-4 mt-2">
-                    {comment.replies.map((reply: CommentType) => (
-                        <Comment
-                            key={reply.id}
-                            id={id}
-                            parentId={reply.id}
-                            comments={[reply]}
-                        />
-                    ))}
-                </div>
-            )
-        }
-
-        return null
-    }
-    const renderCommentForm = (parentId?: string) => {
-        return (
-            <div className="my-2 flex flex-col gap-2 ">
-                <input
-                    className="w-full text-black p-2 border border-gray-300 rounded"
-                    value={commentText[parentId || 'main'] || ''}
-                    onChange={(e) =>
-                        setCommentText((prev) => ({
-                            ...prev,
-                            [parentId || 'main']: e.target.value,
-                        }))
-                    }
-                />
-                <div>
-                    <HighlightButton
-                        onClick={() => handleAddComment(parentId)}
-                        type="submit"
-                        label={'submit'}
-                        className=" bg-primaryBlue w-max capitalize px-4 py-2 rounded-md"
-                    />
-
-                    {parentId && (
-                        <button
-                            className="mt-2 px-4 py-2 ml-2 bg-red-500 text-white rounded"
-                            onClick={() => {
-                                setReplyIds((prev) => {
-                                    const newSet = new Set(prev)
-                                    newSet.delete(parentId)
-                                    return newSet
-                                })
-                            }}
-                        >
-                            Close
-                        </button>
-                    )}
-                </div>
-            </div>
-        )
+    const handleLike = (commentId: string) => {
+        toggleLikeMutation.mutate(commentId)
     }
 
     return (
         <div className={`pl-4 ${parentId ? ' border-gray-400' : ''} `}>
-            {!parentId && renderCommentForm()}
+            {!parentId && (
+                <CommentForm
+                    parentId={parentId}
+                    handleAddComment={handleAddComment}
+                    commentText={commentText}
+                    setCommentText={setCommentText}
+                    setReplyIds={setReplyIds}
+                />
+            )}
             <div className="overflow-y-auto max-h-[500px] p-2">
                 {comments?.map((comment: CommentType) => (
                     <div key={comment.id} className="w-full flex flex-col">
@@ -160,9 +122,18 @@ const Comment: React.FC<CommentProps> = ({ comments, parentId = null, id }) => {
                                         </p>
                                         <div className="flex items-center justify-between ">
                                             <div className="flex items-center gap-3">
-                                                <button>
-                                                    <AiOutlineLike className="block text-primaryBlue h-6 w-6 group-hover:block" />
+                                                <button
+                                                    className="relative"
+                                                    onClick={() =>
+                                                        handleLike(comment.id)
+                                                    }
+                                                >
+                                                    <AiOutlineLike className="block z-20 text-primaryBlue h-6 w-6 group-hover:block" />
+                                                    <span className="absolute text-xs rounded-full -top-1 -right-1 w-4 h-4 bg-red-500">
+                                                        {comment.likes?.length}
+                                                    </span>
                                                 </button>
+
                                                 <button className="relative">
                                                     {comment.replies &&
                                                         comment?.replies
@@ -209,10 +180,18 @@ const Comment: React.FC<CommentProps> = ({ comments, parentId = null, id }) => {
                             </div>
                         </div>
                         {addCommentMutation.isLoading && <Loader size={25} />}
-                        {replyIds.has(comment.id) &&
-                            renderCommentForm(comment.id)}
-                        {replyIds.has(comment.id) &&
-                            renderNestedComments(comment)}
+                        {replyIds.has(comment.id) && (
+                            <CommentForm
+                                parentId={comment.id}
+                                handleAddComment={handleAddComment}
+                                commentText={commentText}
+                                setCommentText={setCommentText}
+                                setReplyIds={setReplyIds}
+                            />
+                        )}
+                        {replyIds.has(comment.id) && (
+                            <NestedComments id={todoId} comment={comment} />
+                        )}
                     </div>
                 ))}
             </div>

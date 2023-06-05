@@ -30,9 +30,22 @@ export async function DELETE(
         )
     }
 
-    const deletedComment = await prisma.comment.delete({
-        where: { id: commentId },
+    await deleteCommentWithChildren(commentId)
+
+    return NextResponse.json(
+        { message: 'Comment and replies deleted successfully' },
+        { status: 200 }
+    )
+}
+
+async function deleteCommentWithChildren(commentId: string) {
+    const childComments = await prisma.comment.findMany({
+        where: { parentId: commentId },
     })
 
-    return NextResponse.json(deletedComment, { status: 200 })
+    for (let comment of childComments) {
+        await deleteCommentWithChildren(comment.id)
+    }
+
+    await prisma.comment.delete({ where: { id: commentId } })
 }

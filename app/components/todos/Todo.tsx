@@ -184,7 +184,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
     const opacity = isDragging ? 0 : 1
 
     drag(drop(ref))
-    console.log(comments)
+
     if (!user) return null
 
     return (
@@ -357,7 +357,7 @@ const Todo = ({ todo, isFullstackWay, moveTodo, index }: Props) => {
                                 src="images/icon-cross.svg"
                             />
                         </button>
-                        <Comment comments={comments} id={todo.id} />
+                        <Comment comments={comments} todoId={todo.id} />
                     </>
                 </Modal>
             )}

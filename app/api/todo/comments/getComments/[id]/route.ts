@@ -7,12 +7,21 @@ export async function GET(
 ) {
     const todoId = params.id
 
-    const comments = await prisma.comment.findMany({
-        where: { todoId },
-        include: {
-            replies: true,
-        },
-    })
+    try {
+        const comments = await prisma.comment.findMany({
+            where: { todoId },
+            include: {
+                replies: true,
+                likes: true,
+            },
+        })
 
-    return NextResponse.json(comments)
+        return NextResponse.json(comments)
+    } catch (error) {
+        console.error(error)
+        return NextResponse.json(
+            { error: 'An error occurred while fetching the comments' },
+            { status: 500 }
+        )
+    }
 }

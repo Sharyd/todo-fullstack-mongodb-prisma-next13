@@ -4,7 +4,6 @@ import { HighlightButton } from '../ui/Button'
 import { status } from '@/app/utils/types'
 import { NotificationCard } from '../ui/NotificationCard'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
 import Loader from '../ui/Loader'
 
 interface Props {
@@ -21,7 +20,6 @@ const PermissionNotificationContentToView = ({
     permissionRequests,
 }: Props) => {
     const data = useQuery('permissionRequests', () => permissionRequests)
-    const [expanded, setExpanded] = useState(false)
     const queryClient = useQueryClient()
 
     const mutationAccept = useMutation(acceptPermissionRequest as any, {

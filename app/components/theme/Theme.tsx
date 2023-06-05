@@ -8,7 +8,6 @@ interface Props {
 
 const Theme = ({ children }: Props) => {
     const { theme } = useContext(ThemeContext)
-
     return <div className={`${theme}`}>{children}</div>
 }
 

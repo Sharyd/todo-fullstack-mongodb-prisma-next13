@@ -4,6 +4,7 @@ import NextAuth, {
     DefaultSession,
     Session,
     TokenSet,
+    User,
 } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GithubProvider from 'next-auth/providers/github'
@@ -13,8 +14,26 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import prisma from '@/app/utils/prismadb'
 import { JWT } from 'next-auth/jwt'
 import { AdapterUser } from 'next-auth/adapters'
-import { Token } from 'typescript'
 import { loggedUserType } from '@/app/utils/types'
+
+interface ExtendedUser extends User {
+    userId: string
+}
+interface SessionWithUserId extends Session {
+    user?: ExtendedUser
+}
+
+interface MySession extends DefaultSession {
+    user?: any
+}
+
+interface MyJWT extends JWT {
+    userId?: string
+}
+
+interface MyUser extends User {
+    userId?: string
+}
 
 export const authOptions: AuthOptions = {
     adapter: PrismaAdapter(prisma),
@@ -79,17 +98,17 @@ export const authOptions: AuthOptions = {
     },
     callbacks: {
         async session(params: {
-            session: Session
+            session: MySession
             token: JWT
             user: loggedUserType | AdapterUser
-        }): Promise<Session | DefaultSession> {
+        }): Promise<SessionWithUserId | DefaultSession> {
             const session = params.session
             const token = params.token
             const userId = token?.sub
             const userInfo = session.user
-            const updatedUser: loggedUserType = {
-                ...userInfo,
-                userId,
+            const updatedUser: ExtendedUser = {
+                ...(userInfo as ExtendedUser),
+                userId: userId as string,
             }
             const user = await prisma.user.findUnique({
                 where: { id: token.sub },
@@ -102,7 +121,7 @@ export const authOptions: AuthOptions = {
                 ...token,
                 user: updatedUser,
                 providerName: provider,
-            })
+            }) as Promise<MySession | DefaultSession>
         },
     },
 

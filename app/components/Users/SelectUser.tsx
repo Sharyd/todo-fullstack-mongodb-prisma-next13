@@ -8,6 +8,7 @@ import { userType } from '@/app/utils/types'
 
 interface Props {
     selected: any
+
     setSelected: React.Dispatch<React.SetStateAction<any>>
     absolute?: string
     data: userType[]

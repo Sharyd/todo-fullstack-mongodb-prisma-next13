@@ -134,7 +134,6 @@ export const acceptPermissionRequest = async (requestId: string) => {
 export const declinePermissionRequest = async (requestId: string) => {
     if (!requestId) throw new Error('requestId is undefined or null')
     const url = createTodoApiUrl('user/permissions/declinePermissionRequest')
-    console.log(`Sending request to ${url} with requestId: ${requestId}`)
     return handleRequest(axios.post(url, { requestId }))
 }
 
@@ -169,4 +168,11 @@ export const deleteComment = async (id: string) => {
 export const updateComment = async (comment: Comment) => {
     const url = createTodoApiUrl(`todo/comments/updateComment/${comment.id}`)
     return handleRequest(axios.put(url, comment))
+}
+
+// likes comment
+
+export const toggleLike = async (id: string) => {
+    const url = createTodoApiUrl(`todo/comments/like/${id}`)
+    return handleRequest(axios.post(url))
 }
