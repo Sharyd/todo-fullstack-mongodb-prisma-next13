@@ -8,8 +8,8 @@ import Input from '../components/ui/Input'
 import Card from '../components/ui/Card'
 import Link from 'next/link'
 import Providers from '../components/auth/Providers'
-import ThemeToggler from '../components/theme/ThemeToggler'
-import { clear } from 'console'
+import ThemeToggler from '../components/themes/ThemesToggler'
+
 import { useRouter } from 'next/navigation'
 import ImageInput from '../components/ui/ImageInput'
 
