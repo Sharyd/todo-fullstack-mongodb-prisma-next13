@@ -4,6 +4,7 @@ import React from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
 import { UseMutationResult, useQueryClient } from 'react-query'
 import { PuffLoader } from 'react-spinners'
+
 import Loader from '../ui/Loader'
 
 interface Props {
