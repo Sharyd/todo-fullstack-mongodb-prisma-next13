@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
 import { promises as fs } from 'fs'
 import { getSession } from '@/app/sessions/getLoggedUser'
+import { uploadImageToCloudinary } from '@/app/utils/cloudinary'
+
 
 
 interface UpdateBody {
@@ -48,12 +50,9 @@ export async function PATCH(request: NextRequest) {
             updates.name = name
         }
         if (image) {
-            const path = `${process.cwd()}/${Date.now()}.png`
-            await fs.writeFile(path, image, 'base64')
-            const result = await cloudinary.uploader.upload(path)
-            imageUrl = result.secure_url
-            await fs.unlink(path)
-            updates.image = imageUrl
+            const result = await uploadImageToCloudinary(image);
+            imageUrl = result.secure_url;
+            updates.image = imageUrl;
         }
     }
     // If user has not logged in with a provider, then password is required for updates
@@ -85,12 +84,9 @@ export async function PATCH(request: NextRequest) {
         }
 
         if (image) {
-            const path = `${process.cwd()}/${Date.now()}.png`
-            await fs.writeFile(path, image, 'base64')
-            const result = await cloudinary.uploader.upload(path)
-            imageUrl = result.secure_url
-            await fs.unlink(path)
-            updates.image = imageUrl
+            const result = await uploadImageToCloudinary(image);
+            imageUrl = result.secure_url;
+            updates.image = imageUrl;
         }
     }
 

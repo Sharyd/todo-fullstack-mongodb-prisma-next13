@@ -3,14 +3,16 @@ import { PrismaClient } from '@prisma/client'
 import { v2 as cloudinary } from 'cloudinary'
 import { promises as fs } from 'fs'
 import bcrypt from 'bcrypt'
+import { uploadImageToCloudinary } from '@/app/utils/cloudinary'
 
 const prisma = new PrismaClient()
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET,
+    cloud_name: process.env.NEXT_PUBLIC_CLOUD_NAME,
+    api_key: process.env.NEXT_PUBLIC_API_KEY,
+    api_secret: process.env.NEXT_PUBLIC_API_SECRET,
 })
+
 
 export async function POST(request: Request) {
     const body = await request.json()
@@ -20,14 +22,11 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 12)
 
     let imageUrl: string | undefined
-
+    console.log(imageUrl)
     if (image) {
         try {
-            const path = `${process.cwd()}/${Date.now()}.png`
-            await fs.writeFile(path, image, 'base64')
-            const result = await cloudinary.uploader.upload(path)
-            imageUrl = result.secure_url
-            await fs.unlink(path)
+            const result = await uploadImageToCloudinary(image);
+            imageUrl = result.secure_url;
         } catch (error) {
             console.error('Error uploading image:', error)
         }
