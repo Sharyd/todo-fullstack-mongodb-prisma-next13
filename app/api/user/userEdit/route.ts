@@ -13,9 +13,9 @@ interface UpdateBody {
 }
 
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
+    cloud_name: process.env.NEXT_PUBLIC_CLOUD_NAME,
+    api_key: process.env.NEXT_PUBLIC_API_KEY,
+    api_secret: process.env.NEXT_PUBLIC_API_SECRET,
 })
 
 export async function PATCH(request: NextRequest) {
