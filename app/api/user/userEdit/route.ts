@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import prisma from '../../../utils/prismadb'
 import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
 import { promises as fs } from 'fs'
 import { getSession } from '@/app/sessions/getLoggedUser'
 
-const prisma = new PrismaClient()
+
 
 interface UpdateBody {
     password?: { oldPassword?: string; newPassword?: string }
