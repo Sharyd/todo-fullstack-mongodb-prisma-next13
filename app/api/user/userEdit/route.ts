@@ -6,7 +6,6 @@ import { promises as fs } from 'fs'
 import { getSession } from '@/app/sessions/getLoggedUser'
 
 
-
 interface UpdateBody {
     password?: { oldPassword?: string; newPassword?: string }
     name?: string
@@ -14,9 +13,9 @@ interface UpdateBody {
 }
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET,
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
 })
 
 export async function PATCH(request: NextRequest) {
