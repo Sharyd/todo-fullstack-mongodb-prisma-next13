@@ -53,7 +53,7 @@ export default function Home() {
         )
     const [isFullstackWay, setIsFullstackWay] = useLocalStorage(
         'isFullStackWay',
-        false
+         true
     )
     const [isOpenNotification, setIsOpenNotification] = useState(false)
     const [isOpenProfile, setIsOpenProfile] = useState(false)
