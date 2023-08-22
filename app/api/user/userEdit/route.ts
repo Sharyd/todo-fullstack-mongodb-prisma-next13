@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import prisma from '../../../utils/prismadb'
 import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
 import { promises as fs } from 'fs'
 import { getSession } from '@/app/sessions/getLoggedUser'
+import { uploadImageToCloudinary } from '@/app/utils/cloudinary'
 
-const prisma = new PrismaClient()
+
 
 interface UpdateBody {
     password?: { oldPassword?: string; newPassword?: string }
@@ -14,9 +15,9 @@ interface UpdateBody {
 }
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET,
+    cloud_name: process.env.NEXT_PUBLIC_CLOUD_NAME,
+    api_key: process.env.NEXT_PUBLIC_API_KEY,
+    api_secret: process.env.NEXT_PUBLIC_API_SECRET,
 })
 
 export async function PATCH(request: NextRequest) {
@@ -49,12 +50,9 @@ export async function PATCH(request: NextRequest) {
             updates.name = name
         }
         if (image) {
-            const path = `${process.cwd()}/${Date.now()}.png`
-            await fs.writeFile(path, image, 'base64')
-            const result = await cloudinary.uploader.upload(path)
-            imageUrl = result.secure_url
-            await fs.unlink(path)
-            updates.image = imageUrl
+            const result = await uploadImageToCloudinary(image);
+            imageUrl = result.secure_url;
+            updates.image = imageUrl;
         }
     }
     // If user has not logged in with a provider, then password is required for updates
@@ -86,12 +84,9 @@ export async function PATCH(request: NextRequest) {
         }
 
         if (image) {
-            const path = `${process.cwd()}/${Date.now()}.png`
-            await fs.writeFile(path, image, 'base64')
-            const result = await cloudinary.uploader.upload(path)
-            imageUrl = result.secure_url
-            await fs.unlink(path)
-            updates.image = imageUrl
+            const result = await uploadImageToCloudinary(image);
+            imageUrl = result.secure_url;
+            updates.image = imageUrl;
         }
     }
 

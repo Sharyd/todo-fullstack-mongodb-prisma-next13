@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import prisma from '../../../utils/prismadb'
 import getLoggedUser from '@/app/sessions/getLoggedUser'
-import { NextApiRequest, NextApiResponse } from 'next/types'
 
 export async function DELETE(
     request: NextRequest,
@@ -22,7 +21,7 @@ export async function DELETE(
         )
     }
 
-    const notification = await prisma?.notification.findUnique({
+    const notification = await prisma.notification.findUnique({
         where: { id: id },
     })
 

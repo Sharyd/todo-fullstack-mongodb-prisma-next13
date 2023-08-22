@@ -7,8 +7,9 @@ import { errorToast, successToast } from '../utils/toast'
 import Input from '../components/ui/Input'
 import Card from '../components/ui/Card'
 import Link from 'next/link'
+
 import Providers from '../components/authentication/Providers'
-import ThemeToggler from '../components/theme/ThemeToggler'
+import ThemeToggler from '../components/themes/ThemesToggler'
 
 import { useRouter } from 'next/navigation'
 import ImageInput from '../components/ui/ImageInput'

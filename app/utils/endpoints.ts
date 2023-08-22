@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios'
 import { Todo } from './types'
 import { Comment } from './types'
 
-const API_BASE_URL = 'http://localhost:3000/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 const createTodoApiUrl = (path: string) => `${API_BASE_URL}/${path}`
 

@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/app/utils/prismadb'
-import { userType } from '@/app/utils/types'
+import prisma from '../../../utils/prismadb'
 
 export async function GET(request: NextRequest, response: NextApiResponse) {
     try {
