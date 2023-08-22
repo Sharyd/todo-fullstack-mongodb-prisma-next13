@@ -1,6 +1,6 @@
 import React from 'react'
 import Register from './Register'
-import Container from '../components/Container'
+import Container from '../components/ui/Container'
 import { getSession } from '../sessions/getLoggedUser'
 import { redirect } from 'next/navigation'
 

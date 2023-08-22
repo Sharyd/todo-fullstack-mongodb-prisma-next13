@@ -1,4 +1,3 @@
-// CommentForm.tsx
 import React from 'react'
 import { HighlightButton } from '../ui/Button'
 

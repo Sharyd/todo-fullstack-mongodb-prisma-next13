@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Toaster } from 'react-hot-toast'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import GradientImage from './components/GradientImage'
+import GradientImage from './components/ui/GradientImage'
 import Hydrate from './components/Hydrate'
 
 const JosefinSans = Josefin_Sans({ subsets: ['latin'] })

@@ -2,14 +2,14 @@
 
 import axios from 'axios'
 import React, { useState } from 'react'
-import { FieldValues, SubmitHandler, set, useForm } from 'react-hook-form'
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import { errorToast, successToast } from '../utils/toast'
 import Input from '../components/ui/Input'
 import Card from '../components/ui/Card'
 import Link from 'next/link'
-import Providers from '../components/auth/Providers'
+import Providers from '../components/authentication/Providers'
 import ThemeToggler from '../components/theme/ThemeToggler'
-import { clear } from 'console'
+
 import { useRouter } from 'next/navigation'
 import ImageInput from '../components/ui/ImageInput'
 

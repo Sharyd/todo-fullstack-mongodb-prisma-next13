@@ -1,6 +1,6 @@
 'use client'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import ButtonChecked from '../ButtonChecked'
+import ButtonChecked from '../ui/ButtonChecked'
 import { useTodoContext } from '@/app/store/todoContextProvider'
 
 import { HiOutlinePencilAlt, HiCheck } from 'react-icons/hi'

@@ -45,15 +45,13 @@ const Comment: React.FC<CommentProps> = ({
                 successToast('Comment added successfully')
             },
             onSettled: (data) => {
-                // the backend should return the id of the new comment
                 const newCommentId = data.id
-                // scroll to the new comment
+
                 commentRefs
                     .get(newCommentId)
                     ?.current?.scrollIntoView({ behavior: 'smooth' })
             },
             onError: (error: any) => {
-                // Assuming errorToast is a function that shows the error message.
                 errorToast(error.message)
             },
         })
@@ -101,7 +99,7 @@ const Comment: React.FC<CommentProps> = ({
                 {comments?.map((comment: CommentType) => (
                     <div key={comment.id} className="w-full flex flex-col">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-4 flex-1">
-                            <div className="flex w-12 items-center flex-col-reverse gap-1 items-start">
+                            <div className="flex w-12 items-center flex-col-reverse gap-1 ">
                                 <img
                                     src={
                                         comment.user?.image ??

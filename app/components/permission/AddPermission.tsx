@@ -18,7 +18,7 @@ interface Props {
 const AddPermission = ({ setIsOpen, text, addPermission }: Props) => {
     const [selected, setSelected] = useState<userType>({ name: 'Select User' })
 
-    const { data, isLoading, isError, isFetching } = useQuery('users', getUsers)
+    const { data, isLoading, isError } = useQuery('users', getUsers)
     const [isLoadingAddPermission, setIsLoadingAddPermission] = useState(false)
 
     const submitPermission = async () => {

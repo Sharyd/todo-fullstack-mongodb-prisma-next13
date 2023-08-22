@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { useTodoContext } from '../store/todoContextProvider'
+import { useTodoContext } from '../../store/todoContextProvider'
 import { UseMutationResult, useQueryClient } from 'react-query'
-import useTodoMutation from '../hooks/useTodoMutation'
-import { completeTodos } from '../utils/endpoints'
-import { Todo } from '../utils/types'
-import Loader from './ui/Loader'
+import useTodoMutation from '../../hooks/useTodoMutation'
+import { completeTodos } from '../../utils/endpoints'
+import { Todo } from '../../utils/types'
+import Loader from './Loader'
 import { AxiosResponse } from 'axios'
-import { errorToast, successToast } from '../utils/toast'
+import { errorToast, successToast } from '../../utils/toast'
 
 interface Props {
     todoId?: string | undefined

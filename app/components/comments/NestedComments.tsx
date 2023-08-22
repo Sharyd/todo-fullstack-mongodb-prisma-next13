@@ -1,4 +1,3 @@
-// NestedComments.tsx
 import React from 'react'
 import Comment from './Comment'
 import { Comment as CommentType } from '@/app/utils/types'

@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image'
-import GradientImage from './components/GradientImage'
+import GradientImage from './components/ui/GradientImage'
 
 import { useEffect, useState } from 'react'
 import useLocalStorage from './hooks/useLocalStorage'
@@ -19,9 +19,9 @@ import {
     status,
 } from './utils/types'
 import { Modal } from './components/ui/modals/Modal'
-import ClientSideOrFullStack from './components/ClientSideOrFullStack'
+import ClientSideOrFullStack from './components/ui/ClientSideOrFullStack'
 import { getFirstName } from './utils/helpers'
-import { CustomMenu as UserMenu } from './components/Menu'
+import { CustomMenu as UserMenu } from './components/ui/Menu'
 import {
     acceptPermissionRequest,
     declinePermissionRequest,

@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react'
-import { HighlightButton, MainButton } from './ui/Button'
+import { HighlightButton, MainButton } from './Button'
 import { BsChevronLeft } from 'react-icons/bs'
 
 interface Props {

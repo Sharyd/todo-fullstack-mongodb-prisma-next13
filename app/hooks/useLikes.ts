@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { toggleLike } from '../utils/endpoints'
-import { Comment, likeType, loggedUserType } from '../utils/types' // import LikeType here
+import { Comment, likeType } from '../utils/types' // import LikeType here
 import { useSession } from 'next-auth/react'
 
 export const useLikes = (todoId: string) => {
@@ -21,13 +21,10 @@ export const useLikes = (todoId: string) => {
             queryClient.setQueryData(['comments', todoId], (old: any) => {
                 return old?.map((comment: Comment) => {
                     if (comment.id === commentId) {
-                        // check if the current user has already liked the comment
                         const hasUserLiked = (comment.likes ?? []).some(
                             (like: likeType) => like.userId === userId
                         )
 
-                        // if the user has already liked the comment, remove the like
-                        // else add a new like
                         return {
                             ...comment,
                             likes: hasUserLiked
@@ -78,7 +75,6 @@ export const useLikes = (todoId: string) => {
         },
         onSettled: () => {
             queryClient.invalidateQueries(['comments', todoId])
-            // After the mutation settles, update the specific comment as well (if you have a query for a single comment)
         },
     })
 
