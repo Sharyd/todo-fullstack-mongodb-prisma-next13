@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react'
 import useLocalStorage from './hooks/useLocalStorage'
 
 import { BsChevronRight, BsChevronUp, BsChevronDown } from 'react-icons/bs'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { errorToast, successToast } from './utils/toast'
 import Todos from './components/todos/Todos'
-import { HighlightButton } from './components/ui/Button'
+import { CloseButton, HighlightButton } from './components/ui/Button'
 import { signOut, useSession } from 'next-auth/react'
 
 import {
@@ -36,6 +36,10 @@ import useReusableMutation from './hooks/useReusableMutation'
 import PermissionGranted from './components/permission/PermissionGranted'
 import EditProfile from './components/users/EditUserProfile'
 import DeleteProfile from './components/users/DeleteUserProfile'
+import ProfileModal from './components/ui/modals/SlideTopModal'
+import UserModal from './components/ui/modals/SlideTopModal'
+import ClientSideFullStackModal from './components/ui/modals/ClientSideFullStackModal'
+import SlideTopModal from './components/ui/modals/SlideTopModal'
 
 export default function Home() {
     const { data: session } = useSession()
@@ -53,7 +57,7 @@ export default function Home() {
         )
     const [isFullstackWay, setIsFullstackWay] = useLocalStorage(
         'isFullStackWay',
-         true
+        true
     )
     const [isOpenNotification, setIsOpenNotification] = useState(false)
     const [isOpenProfile, setIsOpenProfile] = useState(false)
@@ -79,7 +83,7 @@ export default function Home() {
             )
         }
     )
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpenClientFullstack, setIsOpenClientFullstack] = useState(false)
 
     const isPending = permissionRequests?.some(
         (request) => request.status === status.Pending
@@ -110,6 +114,7 @@ export default function Home() {
             ? successToast('Fullstack is enabled')
             : successToast('Client side is enabled')
     }, [isFullstackWay])
+
     return (
         <div className="relative">
             {isPending && (
@@ -165,7 +170,7 @@ export default function Home() {
                                 src={
                                     user?.image ?? '/images/defaultProfile.jpg'
                                 }
-                                alt="user image"
+                                alt="user profile image"
                             />
                         </div>
                     </UserMenu>
@@ -182,44 +187,17 @@ export default function Home() {
             </div>
 
             <div className="fixed bottom-[50%] z-50 left-0">
-                <Modal
-                    setIsOpen={setIsOpen}
-                    isOpen={isOpen}
-                    className="w-[450px] flex flex-col gap-4 p-4  bottom-[20%] left-0"
-                    modalTitle={'Welcome in Todo application!'}
-                    initial={{
-                        x: '-100%',
-                        opacity: 1,
-                    }}
-                    animate={{
-                        x: 0,
-                        opacity: 1,
-                    }}
-                    exit={{
-                        x: '-100%',
-                        opacity: 0,
-                    }}
-                >
-                    <ClientSideOrFullStack
-                        setIsFullstackWay={setIsFullstackWay}
-                        isFullstackWay={isFullstackWay}
-                        setIsOpen={setIsOpen}
-                    />
-                </Modal>
-
-                {!isOpen && (
-                    <HighlightButton
-                        onClick={() => setIsOpen(true)}
-                        type="button"
-                        label={<BsChevronRight />}
-                        className="fixed bg-primaryBlue bottom-0 md:bottom-[50%] w-max left-0 p-4 sm:p-6"
-                    />
-                )}
+                <ClientSideFullStackModal
+                    setIsOpen={setIsOpenClientFullstack}
+                    isOpen={isOpenClientFullstack}
+                    isFullstackWay={isFullstackWay}
+                    setIsFullstackWay={setIsFullstackWay}
+                />
             </div>
             <motion.div
                 animate={{
-                    scale: isOpen ? 0.9 : 1,
-                    opacity: isOpen ? 0.7 : 1,
+                    scale: isOpenClientFullstack ? 0.9 : 1,
+                    opacity: isOpenClientFullstack ? 0.7 : 1,
                 }}
                 transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
                 className=" relative"
@@ -229,89 +207,39 @@ export default function Home() {
                     setIsFullstackWay={setIsFullstackWay}
                 />
             </motion.div>
-            {isOpenNotification && (
-                <Modal
-                    className="w-[450px] h-max  md:w-[600px] left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4 overflow-y-auto"
-                    setIsOpen={setIsOpenNotification}
-                    isOpen={isOpenNotification}
-                    modalTitle="My notifications"
-                    initial={{
-                        y: '-100%',
-                        opacity: 1,
-                    }}
-                    animate={{
-                        y: 0,
-                        opacity: 1,
-                    }}
-                    exit={{
-                        y: '-100%',
-                        opacity: 0,
-                    }}
-                >
-                    <div className="flex flex-col gap-4 max-h-[400px] p-2 overflow-y-auto">
-                        <PermissionGranted
-                            notification={notification}
-                            deleteNotificationMutation={
-                                deleteNotificationMutation
-                            }
-                        />
-                    </div>
-                    <div className="ml-auto mt-auto block">
-                        <button
-                            onClick={() => setIsOpenNotification(false)}
-                            className="capitalize hover:outline outline-1 px-4 py-2 rounded-md outline-red-500"
-                        >
-                            close
-                        </button>
-                    </div>
-                </Modal>
-            )}
 
-            {isOpenProfile && (
-                <Modal
-                    className="w-[450px] h-max  md:w-[600px] left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4 overflow-y-auto"
-                    setIsOpen={setIsOpenProfile}
-                    isOpen={isOpenProfile}
-                    modalTitle="Edit profile"
-                    initial={{
-                        y: '-100%',
-                        opacity: 1,
-                    }}
-                    animate={{
-                        y: 0,
-                        opacity: 1,
-                    }}
-                    exit={{
-                        y: '-100%',
-                        opacity: 0,
-                    }}
-                >
-                    <EditProfile setIsOpen={setIsOpenProfile} />
-                </Modal>
-            )}
+            <SlideTopModal
+                title="Notifications"
+                setIsOpen={setIsOpenNotification}
+                isOpen={isOpenNotification}
+            >
+                <div className="flex flex-col gap-4 max-h-[400px] p-2 overflow-y-auto">
+                    <PermissionGranted
+                        notification={notification}
+                        deleteNotificationMutation={deleteNotificationMutation}
+                    />
+                </div>
 
-            {isDeleteProfile && (
-                <Modal
-                    className="w-[450px] h-max  md:w-[600px] left-1/2 top-1/2 !-translate-y-1/2 !-translate-x-1/2 gap-4 overflow-y-auto"
-                    setIsOpen={setIsDeleteProfile}
-                    isOpen={isDeleteProfile}
-                    modalTitle="Delete Profile"
-                    initial={{
-                        y: '-100%',
-                        opacity: 1,
-                    }}
-                    animate={{
-                        y: 0,
-                        opacity: 1,
-                    }}
-                    exit={{
-                        y: '-100%',
-                        opacity: 0,
-                    }}
-                >
-                    <DeleteProfile setIsOpen={setIsDeleteProfile} />
-                </Modal>
-            )}
+                <div className="ml-auto mt-auto block">
+                    <CloseButton onClick={() => setIsOpenNotification(false)} />
+                </div>
+            </SlideTopModal>
+
+            <SlideTopModal
+                title="Edit Profile"
+                setIsOpen={setIsOpenProfile}
+                isOpen={isOpenProfile}
+            >
+                <EditProfile setIsOpen={setIsOpenProfile} />
+            </SlideTopModal>
+
+            <SlideTopModal
+                title="Delete Profile"
+                setIsOpen={setIsDeleteProfile}
+                isOpen={isDeleteProfile}
+            >
+                <DeleteProfile setIsOpen={setIsDeleteProfile} />
+            </SlideTopModal>
         </div>
     )
 }

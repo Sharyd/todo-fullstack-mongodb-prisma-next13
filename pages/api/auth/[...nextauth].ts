@@ -27,14 +27,6 @@ interface MySession extends DefaultSession {
     user?: any
 }
 
-interface MyJWT extends JWT {
-    userId?: string
-}
-
-interface MyUser extends User {
-    userId?: string
-}
-
 export const authOptions: AuthOptions = {
     adapter: PrismaAdapter(prisma),
     providers: [

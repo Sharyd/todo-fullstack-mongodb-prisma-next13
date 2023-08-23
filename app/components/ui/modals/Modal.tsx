@@ -47,7 +47,7 @@ export function Modal({
                         transition={{
                             type: 'spring',
                             bounce: 0,
-                            duration: 0.5,
+                            duration: 0.4,
                         }}
                         static
                         className={`fixed inset-0 z-50 p-5 ${className} ${

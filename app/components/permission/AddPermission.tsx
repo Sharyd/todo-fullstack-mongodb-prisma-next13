@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import SelectUser from '../users/SelectUsers'
 import { userType } from '@/app/utils/types'
-import { HighlightButton } from '../ui/Button'
+import { CloseButton, HighlightButton } from '../ui/Button'
 import { errorToast, successToast } from '@/app/utils/toast'
 import { getUsers } from '@/app/utils/endpoints'
 import { useQuery } from 'react-query'
@@ -54,18 +54,13 @@ const AddPermission = ({ setIsOpen, text, addPermission }: Props) => {
                         onClick={submitPermission}
                         type="submit"
                         label={'submit'}
-                        className=" bg-primaryBlue capitalize px-4 py-2 rounded-md"
+                        className="bg-primaryBlue capitalize px-4 py-2 rounded-md"
                     />
                 ) : (
                     <Loader size={20} />
                 )}
 
-                <button
-                    onClick={() => setIsOpen(false)}
-                    className="capitalize hover:outline outline-1 px-4 py-2 rounded-md outline-red-500"
-                >
-                    close
-                </button>
+                <CloseButton onClick={() => setIsOpen(false)} />
             </div>
         </div>
     )

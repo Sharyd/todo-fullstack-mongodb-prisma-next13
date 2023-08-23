@@ -1,6 +1,7 @@
 'use client'
 import { type } from 'os'
 import { IconType } from 'react-icons'
+import { BsX } from 'react-icons/bs'
 
 interface MainButtonProps {
     label: string
@@ -64,6 +65,17 @@ export const HighlightButton = ({
         >
             {Icon && <Icon size={24} className="left-4 top-3" />}
             {label}
+        </button>
+    )
+}
+
+export const CloseButton = ({ onClick }: { onClick: () => void }) => {
+    return (
+        <button
+            onClick={onClick}
+            className="capitalize hover:outline outline-1 px-4 py-2 rounded-md outline-red-500"
+        >
+            close
         </button>
     )
 }
